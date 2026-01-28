@@ -23,15 +23,16 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
       - JSON validation is NOT performed here (validate only on submit in main.py)
       - Readiness in JSON mode uses "textarea non-empty" as the proxy for metrics completeness.
     """
+    mode = st.radio(
+        "Metrics input mode",
+        ["Form", "JSON"],
+        horizontal=True,
+        index=0 if st.session_state.mode == "Form" else 1,
+    )
+    st.session_state.mode = mode  # persist across reruns
     with st.form("input_form"):
         # --- Metrics input mode (Mode C) ---
-        mode = st.radio(
-            "Metrics input mode",
-            ["Form", "JSON"],
-            horizontal=True,
-            index=0 if st.session_state.mode == "Form" else 1,
-        )
-        st.session_state.mode = mode  # persist across reruns
+
 
         # ---------- Expanders ----------
         with st.expander("Context", expanded=True):
