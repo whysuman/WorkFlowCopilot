@@ -14,3 +14,5 @@ def init_session_state() -> None:
         st.session_state.readiness_pct = 0
     if "last_json_valid_on_submit" not in st.session_state:
         st.session_state.last_json_valid_on_submit = None
+    if "show_json_metrics" not in st.session_state:
+        st.session_state.show_json_metrics = False
