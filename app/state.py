@@ -14,5 +14,13 @@ def init_session_state() -> None:
         st.session_state.readiness_pct = 0
     if "last_json_valid_on_submit" not in st.session_state:
         st.session_state.last_json_valid_on_submit = None
-    if "show_json_metrics" not in st.session_state:
-        st.session_state.show_json_metrics = False
+    # if "show_json_metrics" not in st.session_state:
+    #     st.session_state.show_json_metrics = False
+
+def on_submit_callback(raw_json, mode):
+    if mode == "JSON":
+        from app.validation import validate_metrics_json
+        _, err = validate_metrics_json(raw_json)
+        st.session_state.last_json_valid_on_submit = (err is None)
+    else:
+        st.session_state.last_json_valid_on_submit = True

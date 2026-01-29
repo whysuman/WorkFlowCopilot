@@ -60,7 +60,7 @@ def main() -> None:
     st.set_page_config(page_title="AI-Guided Investigation Copilot (v1)", layout="wide")
     init_session_state()
 
-    # Optional: provide an example JSON blob for the UI placeholder (no validation here)
+
     st.session_state.setdefault("json_example", json.dumps(DEFAULTS, indent=2))
 
     st.title("AI-Guided Manufacturing Investigation Copilot (v1)")

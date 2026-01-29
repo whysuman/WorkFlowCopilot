@@ -5,6 +5,7 @@ from typing import Any, Dict, Tuple
 from app.config import SITES, TOOL_GROUPS, PROCESS_STEPS, SEVERITY_LEVELS, DEFAULTS
 from app.readiness import compute_readiness
 from app.output_render import render_readiness
+from app.state import on_submit_callback
 
 
 def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
