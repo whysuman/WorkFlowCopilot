@@ -31,7 +31,8 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
         key="mode"
     )
     mode = st.session_state.mode  # persist across reruns
-    st.session_state.setdefault("show_json_metrics", False)
+    # st.session_state.setdefault("show_json_metrics", False)
+    # st.session_state.setdefault("last_json_valid_on_submit", None)
     with st.form("input_form"):
         # ---------- Expanders ----------
         yield_pct = affected_lot_count = time_window_hours = None
@@ -135,15 +136,18 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
             if mode == "JSON":
                 if st.session_state.last_json_valid_on_submit is False:
                     st.warning("Previous JSON was invalid. Please correct before submitting.")
+                    st.error(f"Validation Error: {st.session_state.json_validation_error}")
+                elif st.session_state.last_json_valid_on_submit is None:
+                    st.info("No prior JSON metrics submitted.")
                 else:
                     st.success("Previous JSON was valid.")
                     st.markdown("**Metrics (JSON)**")
-                    st.caption("Strict schema + numeric types. Validation happens only on Submit.")
+                st.caption("Strict schema + numeric types. Validation happens only on Submit.")
                 metrics_json_raw = st.text_area(
                     "Paste metrics JSON",
                     height=220,
                     placeholder=st.session_state.get("json_example", ""),
-            )
+                )
             else:
                 st.caption("Submitting metrics from: **Form** (JSON will be ignored).")
 
@@ -179,7 +183,11 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
 
         # --- Submit control ---
         st.caption(f"Submitting metrics from: **{mode}**")
-        submit_clicked = st.form_submit_button("Submit investigation")
+        submit_clicked = st.form_submit_button(
+            "Submit investigation",
+            on_click=on_submit_callback,
+            args=(metrics_json_raw, mode)
+        )
 
     inputs: Dict[str, Any] = {
         "site": site,
