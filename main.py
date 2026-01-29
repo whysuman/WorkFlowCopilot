@@ -76,6 +76,8 @@ def main() -> None:
 
         # --- Submit handler (the ONLY place JSON validation happens) ---
         if submit:
+            st.write("DEBUG inputs['mode']:", inputs["mode"])
+            st.write("DEBUG session mode:", st.session_state.get("mode"))
             st.session_state.json_validation_error = None
 
             mode = inputs["mode"]
@@ -84,11 +86,12 @@ def main() -> None:
             # Active mode wins
             if mode == "JSON":
                 parsed, err = validate_metrics_json(metrics_json_raw)
+                st.session_state.last_json_valid_on_submit = (err is None)
                 if err:
-                    # Block API call / response update
+                    # Block API call / response update``
                     st.session_state.json_validation_error = err
-                    st.last_json_valid_on_submit = False
                 else:
+                    st.write(f"Last json valid on submit value {st.session_state.last_json_valid_on_submit}")
                     payload = build_payload(
                         site=inputs["site"],
                         tool_group=inputs["tool_group"],
@@ -101,7 +104,7 @@ def main() -> None:
                         json_metrics=parsed,
                     )
                     st.session_state.last_request = payload
-                    st.last_json_valid_on_submit = True
+                    st.session_state.last_json_valid_on_submit = True
                     st.session_state.last_response = build_placeholder_response(payload)
 
                     append_jsonl(
