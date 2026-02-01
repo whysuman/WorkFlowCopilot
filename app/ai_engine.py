@@ -12,7 +12,7 @@ Flow:
 from __future__ import annotations
 
 import datetime as dt
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import streamlit as st
 
@@ -28,9 +28,10 @@ from app.triage import assess_investigation
 from app.placeholder import build_placeholder_response
 from app.config import CASES_PATH
 
-
+# List[Dict[str, Any]]
+# np.ndarray
 @st.cache_resource
-def init_rag_pipeline():
+def init_rag_pipeline() -> Tuple[Optional[List[Dict[str, Any]]], Optional[Any]]:
     """
     Initialize RAG pipeline once (cached across Streamlit reruns).
     Loads cases and pre-computes embeddings.
@@ -59,7 +60,8 @@ def build_ai_response(payload: Dict[str, Any]) -> Dict[str, Any]:
     if rag_available:
         try:
             retrieved_cases = retrieve_similar_cases(payload, cases, embeddings, top_k=3)
-        except Exception:
+        except Exception as e:
+            st.warning(f"RAG retrieval failed: {e}")
             rag_available = False
 
     # --- Step 2: Detect LLM backend ---
