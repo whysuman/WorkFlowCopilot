@@ -2,3 +2,8 @@
 pyproject.toml
 __pycache__/
 .python-version
+CLAUDE.md
+.env
+app/data/case_embeddings.npy
+app/data/case_embeddings_hash.txt
+STRATEGY_REPORT_KLA.txt
