@@ -2,7 +2,10 @@ import json
 import os
 import sys
 import random
+import numpy as np
 from datetime import datetime, timezone, timedelta
+from scipy import stats
+from scipy.stats import beta, lognorm, poisson
 
 # --- 0. PATH SETUP & CONFIG LOADING ---
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -11,9 +14,10 @@ OUTPUT_PATH = os.path.join(ROOT, "app", "data", "realistic_cases.json")
 sys.path.append(ROOT)
 
 try:
-    from app.config import SITES, TOOL_GROUPS, PROCESS_STEPS
+    from app.config import SITES, TOOL_GROUPS, PROCESS_STEPS, BUCKET_RANGES
+    from app.schema import METRIC_KEYS
 except ImportError:
-    print("❌ Error: Could not import config from app.config")
+    print(" Error: Could not import config from app.config")
     sys.exit(1)
 
 # --- 1. CONFIGURATION & GUARDS ---
@@ -27,313 +31,640 @@ REAL_TOOL_GROUPS = TOOL_GROUPS[1:]
 REAL_PROCESS_STEPS = PROCESS_STEPS[1:]
 
 assert REAL_SITES and REAL_TOOL_GROUPS and REAL_PROCESS_STEPS, \
-    "❌ Config lists must contain at least 1 real option after the placeholder."
+    " Config lists must contain at least 1 real option."
 
-METRIC_KEYS = {
-    "yield_pct", "metric_variance", "change_magnitude", 
-    "measurement_confidence", "affected_lot_count", 
-    "rework_rate", "time_window_hours"
-}
 
-# --- 2. BUCKET DEFINITIONS ---
 
-BUCKET_RANGES = {
-    "yield_bucket": {
-        "none": (91.5, 96.0),    # Normal Baseline
-        "small": (89.0, 92.4),   # Mild dip
-        "medium": (80.0, 88.9),  # Distinct drop
-        "large": (50.0, 79.9)    # Catastrophic
-    },
-    "variance_bucket": {
-        "low": (0.01, 0.15),
-        "medium": (0.16, 0.35),
-        "high": (0.36, 0.90)
-    },
-    "change_bucket": {
-        "small": (0.1, 4.0),
-        "medium": (4.1, 10.0),
-        "large": (10.1, 25.0)
-    },
-    "measurement_bucket": {
-        "low": (0.0, 0.50), "medium": (0.51, 0.80), "high": (0.81, 1.0)
-    },
-    "lots_bucket": {
-        "small": (1, 3), "medium": (4, 10), "large": (11, 50)
-    },
-    "rework_bucket": {
-        "low": (0.0, 2.0), "medium": (2.1, 8.0), "high": (8.1, 25.0)
-    },
-    "window_bucket": {
-        "short": (1, 12), "medium": (13, 48), "long": (49, 168)
-    }
-}
+# --- 2. REALISTIC DISTRIBUTION HELPERS ---
 
-# --- 3. PATTERN FAMILIES WITH CONSTRAINTS ---
+def sample_from_beta_in_range(lo, hi, alpha=2.0, beta_param=5.0, clamp_hi=None):
+    """
+    Sample from beta distribution mapped to [lo, hi) range.
+    Beta distribution creates more realistic clustering patterns.
 
-# Filters for specific logic
+    Default params (alpha=2, beta=5) create right-skewed distribution
+    suitable for yields (most values high, some low).
+    """
+    sample = np.random.beta(alpha, beta_param)
+
+    # Map to range
+    val = lo + sample * (hi - lo)
+
+    # Physical clamp
+    if clamp_hi is not None:
+        val = min(val, clamp_hi)
+
+    # Ensure within [lo, hi)
+    epsilon = 1e-6
+    val = max(lo, min(val, hi - epsilon))
+
+    rounded = round(val, 2)
+    if rounded >= hi:
+        rounded = round(hi - 0.01, 2)
+    if rounded < lo:
+        rounded = lo
+    return rounded
+
+
+def sample_from_lognormal_in_range(lo, hi, sigma=0.5):
+    """
+    Sample from log-normal distribution for metrics like variance.
+    Common in semiconductor data due to multiplicative processes.
+    """
+    mid = (lo + hi) / 2
+    mu = np.log(mid)
+
+    sample = np.random.lognormal(mu, sigma)
+
+    # Clamp to [lo, hi)
+    epsilon = 1e-6
+    val = max(lo, min(sample, hi - epsilon))
+
+    rounded = round(val, 3)
+    if rounded >= hi:
+        rounded = round(hi - 0.001, 3)
+    if rounded < lo:
+        rounded = lo
+    return rounded
+
+
+def sample_poisson_in_range(lo, hi, lambda_param=None):
+    """
+    Sample from Poisson distribution for count data (lots).
+    If lambda not provided, use midpoint of range.
+    """
+    if lambda_param is None:
+        lambda_param = (lo + hi) / 2
+
+    sample = np.random.poisson(lambda_param)
+
+    # Clamp to [lo, hi)
+    val = max(int(lo), min(sample, int(hi) - 1))
+
+    return max(1, val)  # Ensure at least 1
+
+
+def sample_truncated_normal_in_range(lo, hi, mean=None, std=None, clamp_hi=None):
+    """
+    Sample from truncated normal distribution.
+    Good for metrics with central tendency like measurement confidence.
+    """
+    if mean is None:
+        mean = (lo + hi) / 2
+    if std is None:
+        std = (hi - lo) / 6  # 3-sigma covers range
+
+    a = (lo - mean) / std
+    b = (hi - mean) / std
+    sample = stats.truncnorm.rvs(a, b, loc=mean, scale=std)
+
+    # Physical clamp
+    if clamp_hi is not None:
+        sample = min(sample, clamp_hi)
+
+    epsilon = 1e-6
+    val = max(lo, min(sample, hi - epsilon))
+
+    rounded = round(val, 2)
+    if rounded >= hi:
+        rounded = round(hi - 0.01, 2)
+    if rounded < lo:
+        rounded = lo
+    return rounded
+
+
+# --- 3. CORRELATION MATRIX ---
+
+def apply_correlations(base_metrics, signals):
+    """
+    Apply realistic correlations between metrics based on semiconductor physics.
+
+    Correlations observed in real manufacturing:
+    - High variance → Lower measurement confidence
+    - Large yield drops → Higher rework rates
+    - Long time windows → More affected lots
+    - High variance → Higher rework rate
+
+    FIX APPLIED: After each adjustment, the value is re-clamped to its
+    target bucket range. Without this, correlations can push values across
+    bucket boundaries, causing downstream validation failures.
+    """
+    metrics = base_metrics.copy()
+
+    # Correlation 1: High variance reduces measurement confidence
+    if signals["variance_bucket"] == "high":
+        current_conf = metrics["measurement_confidence"]
+        noise_factor = np.random.uniform(0.85, 0.95)
+        adjusted = round(max(0.1, current_conf * noise_factor), 2)
+
+        # Re-clamp to target measurement bucket
+        m_min, m_max = BUCKET_RANGES["measurement_bucket"][signals["measurement_bucket"]]
+        metrics["measurement_confidence"] = max(m_min, min(adjusted, round(m_max - 0.01, 2)))
+
+    # Correlation 2: Large negative yield change increases rework
+    if signals["change_dir"] == "neg" and abs(metrics["change_magnitude"]) > 5.0:
+        current_rework = metrics["rework_rate"]
+        boost_factor = 1.0 + abs(metrics["change_magnitude"]) * 0.05
+        adjusted = round(current_rework * boost_factor, 2)
+
+        # Re-clamp to target rework bucket
+        r_min, r_max = BUCKET_RANGES["rework_bucket"][signals["rework_bucket"]]
+        metrics["rework_rate"] = max(r_min, min(adjusted, round(r_max - 0.01, 2)))
+
+    # Correlation 3: Long time windows correlate with more lots
+    if signals["window_bucket"] == "long":
+        current_lots = metrics["affected_lot_count"]
+        boost = np.random.randint(5, 15)
+        adjusted = current_lots + boost
+
+        # Re-clamp to target lots bucket
+        l_min, l_max = BUCKET_RANGES["lots_bucket"][signals["lots_bucket"]]
+        metrics["affected_lot_count"] = max(l_min, min(adjusted, l_max - 1))
+
+    # Correlation 4: Variance and rework correlation
+    if signals["variance_bucket"] in ["medium", "high"]:
+        variance_val = metrics["metric_variance"]
+        current_rework = metrics["rework_rate"]
+        variance_penalty = variance_val * 10  # variance is 0-1
+        adjusted = round(current_rework + variance_penalty, 2)
+
+        # Re-clamp to target rework bucket
+        r_min, r_max = BUCKET_RANGES["rework_bucket"][signals["rework_bucket"]]
+        metrics["rework_rate"] = max(r_min, min(adjusted, round(r_max - 0.01, 2)))
+
+    return metrics
+
+
+# --- 4. IMPROVED METRIC GENERATION ---
+
+def generate_metrics_realistic(signals, family_title):
+    """
+    Generate metrics using realistic statistical distributions.
+    Uses Beta, Log-normal, Poisson, and Truncated Normal distributions
+    based on semiconductor manufacturing literature.
+
+    FIX APPLIED (STEP 4): safe_c_max is rounded to 2 decimal places before
+    being passed to the sampling functions. This snaps floating-point drift
+    (e.g., 100.0 - 95.9 = 4.0999...94 instead of 4.1) back to the clean
+    bucket boundary, preventing the sampler from producing values that
+    round onto the exclusive upper bound and fail bucket classification.
+    """
+    metrics = {}
+
+    # --- STEP 1: Resolve change constraints ---
+    c_min, c_max = BUCKET_RANGES["change_bucket"][signals["change_bucket"]]
+    change_dir = signals["change_dir"]
+
+    # --- STEP 2: Feasible yield range ---
+    y_min, y_max = BUCKET_RANGES["yield_severity"][signals["yield_severity"]]
+    feasible_y_lo, feasible_y_hi = y_min, y_max
+
+    if change_dir == "neg":
+        eps = 1e-6
+        max_phys_yield = 100.0 - c_min - eps
+        feasible_y_hi = min(feasible_y_hi, max_phys_yield)
+    elif change_dir == "pos":
+        feasible_y_lo = max(feasible_y_lo, c_min)
+
+    if feasible_y_lo >= feasible_y_hi:
+        raise ValueError(
+            f" IMPOSSIBLE DEFINITION in '{family_title}':\n"
+            f"   Yield bucket '{signals['yield_severity']}' ({y_min}-{y_max}) has no feasible overlap with\n"
+            f"   Change bucket '{signals['change_bucket']}' (dir={change_dir}, {c_min}-{c_max}).\n"
+            f"   Resulting yield range is empty: [{feasible_y_lo}, {feasible_y_hi}]"
+        )
+
+    # --- STEP 3: Generate yield using Beta distribution ---
+    if signals["yield_severity"] in ["large", "medium"]:
+        yield_val = sample_from_beta_in_range(
+            feasible_y_lo, feasible_y_hi, alpha=2.5, beta_param=3.0, clamp_hi=100.0
+        )
+    else:
+        yield_val = sample_from_beta_in_range(
+            feasible_y_lo, feasible_y_hi, alpha=3.0, beta_param=2.0, clamp_hi=100.0
+        )
+    metrics["yield_pct"] = yield_val
+
+    # --- STEP 4: Generate change with realistic distribution ---
+    # FIX: round safe_c_max to 2 decimals to snap float drift back to the
+    # clean bucket boundary before passing to the sampler.
+    if change_dir == "neg":
+        phys_c_max = 100.0 - yield_val
+        actual_c_max = min(c_max, phys_c_max)
+        safe_c_max = round(max(actual_c_max, c_min), 2)  # ← FIX: snap float drift
+
+        mag = sample_from_lognormal_in_range(c_min, safe_c_max, sigma=0.4)
+        metrics["change_magnitude"] = -mag
+
+    elif change_dir == "pos":
+        phys_c_max = yield_val
+        actual_c_max = min(c_max, phys_c_max)
+        safe_c_max = round(max(actual_c_max, c_min), 2)  # ← FIX: snap float drift
+
+        mag = sample_from_beta_in_range(c_min, safe_c_max, alpha=2.0, beta_param=4.0)
+        metrics["change_magnitude"] = mag
+    else:
+        metrics["change_magnitude"] = 0.0
+
+    # --- STEP 5: Variance using log-normal (multiplicative errors) ---
+    v_min, v_max = BUCKET_RANGES["variance_bucket"][signals["variance_bucket"]]
+
+    if signals["variance_bucket"] == "high":
+        metrics["metric_variance"] = sample_from_lognormal_in_range(
+            v_min, v_max, sigma=0.6
+        )
+    else:
+        metrics["metric_variance"] = sample_from_lognormal_in_range(
+            v_min, v_max, sigma=0.3
+        )
+    metrics["metric_variance"] = min(1.0, metrics["metric_variance"])
+
+    # --- STEP 6: Measurement confidence (truncated normal) ---
+    m_min, m_max = BUCKET_RANGES["measurement_bucket"][signals["measurement_bucket"]]
+
+    if signals["measurement_bucket"] == "high":
+        mean = m_min + 0.75 * (m_max - m_min)
+    elif signals["measurement_bucket"] == "low":
+        mean = m_min + 0.25 * (m_max - m_min)
+    else:
+        mean = (m_min + m_max) / 2
+
+    metrics["measurement_confidence"] = sample_truncated_normal_in_range(
+        m_min, m_max, mean=mean, clamp_hi=1.0
+    )
+
+    # --- STEP 7: Lot count (Poisson distribution) ---
+    l_min, l_max = BUCKET_RANGES["lots_bucket"][signals["lots_bucket"]]
+    l_min = max(1, l_min)
+
+    if signals["lots_bucket"] == "large":
+        lambda_lots = (l_min + l_max) * 0.6
+    elif signals["lots_bucket"] == "small":
+        lambda_lots = (l_min + l_max) * 0.3
+    else:
+        lambda_lots = (l_min + l_max) * 0.5
+
+    metrics["affected_lot_count"] = sample_poisson_in_range(l_min, l_max, lambda_lots)
+
+    # --- STEP 8: Rework rate (beta distribution) ---
+    r_min, r_max = BUCKET_RANGES["rework_bucket"][signals["rework_bucket"]]
+
+    if signals["rework_bucket"] == "high":
+        metrics["rework_rate"] = sample_from_beta_in_range(
+            r_min, r_max, alpha=4.0, beta_param=2.0, clamp_hi=100.0
+        )
+    else:
+        metrics["rework_rate"] = sample_from_beta_in_range(
+            r_min, r_max, alpha=2.0, beta_param=5.0, clamp_hi=100.0
+        )
+
+    # --- STEP 9: Time window (Poisson for count-like data) ---
+    w_min, w_max = BUCKET_RANGES["window_bucket"][signals["window_bucket"]]
+    w_min = max(1, w_min)
+
+    if signals["window_bucket"] == "long":
+        lambda_window = (w_min + w_max) * 0.6
+    elif signals["window_bucket"] == "short":
+        lambda_window = (w_min + w_max) * 0.3
+    else:
+        lambda_window = (w_min + w_max) * 0.5
+
+    metrics["time_window_hours"] = sample_poisson_in_range(w_min, w_max, lambda_window)
+
+    # --- STEP 10: Apply correlations ---
+    metrics = apply_correlations(metrics, signals)
+
+    # Schema sanity check
+    assert set(metrics.keys()) == METRIC_KEYS, f"Schema mismatch: got {set(metrics.keys())}"
+
+    return metrics
+
+
+def classify_value(value, category):
+    """
+    Classifies a value into a bucket using strict [lo, hi) logic.
+    """
+    ranges = BUCKET_RANGES[category]
+
+    if category == "change_bucket":
+        value = abs(value)
+
+    for label, (lo, hi) in sorted(ranges.items(), key=lambda kv: kv[1][0]):
+        if lo <= value < hi:
+            return label
+    return "unknown"
+
+
+def validate_case(case, signals):
+    """
+    Post-generation validation. Asserts every generated value lands
+    in its target bucket and that sign semantics are correct.
+    """
+    m = case["metrics"]
+
+    checks = [
+        ("yield_pct",                "yield_severity"),
+        ("metric_variance",          "variance_bucket"),
+        ("measurement_confidence",   "measurement_bucket"),
+        ("affected_lot_count",       "lots_bucket"),
+        ("rework_rate",              "rework_bucket"),
+        ("time_window_hours",        "window_bucket"),
+    ]
+
+    for key, bucket_name in checks:
+        actual_label = classify_value(m[key], bucket_name)
+        expected_label = signals[bucket_name]
+        assert actual_label == expected_label, (
+            f" Validation Mismatch [{key}]: {m[key]} classified as '{actual_label}', "
+            f"expected '{expected_label}'"
+        )
+
+    # Change bucket check (uses abs internally)
+    if signals["change_dir"] != "zero":
+        actual_label = classify_value(m["change_magnitude"], "change_bucket")
+        expected_label = signals["change_bucket"]
+        assert actual_label == expected_label, (
+            f" Validation Mismatch [change_magnitude]: {m['change_magnitude']} classified as "
+            f"'{actual_label}', expected '{expected_label}'"
+        )
+
+    # Sign semantics
+    if signals["change_dir"] == "neg":
+        assert m["change_magnitude"] <= -1e-9, (
+            f" Sign Mismatch: Expected negative change, got {m['change_magnitude']}"
+        )
+    elif signals["change_dir"] == "pos":
+        assert m["change_magnitude"] >= 1e-9, (
+            f" Sign Mismatch: Expected positive change, got {m['change_magnitude']}"
+        )
+    else:
+        assert abs(m["change_magnitude"]) < 1e-9, (
+            f" Sign Mismatch: Expected zero change, got {m['change_magnitude']}"
+        )
+
+
+# --- 5. PATTERN FAMILIES ---
+
 def filter_tools(keyword):
-    return [t for t in REAL_TOOL_GROUPS if keyword in t]
+    return [t for t in REAL_TOOL_GROUPS if keyword.lower() in t.lower()]
 
 def filter_steps(keyword):
-    return [s for s in REAL_PROCESS_STEPS if keyword in s]
+    return [s for s in REAL_PROCESS_STEPS if keyword.lower() in s.lower()]
 
 FAMILIES = [
     {
         "title": "Yield dip coincident with metrology instability",
         "constraints": {
             "process_step": filter_steps("metrology") + filter_steps("inspection"),
-            "tool_group": filter_tools("INSPECT") # Assuming INSPECT groups handle metrology
+            "tool_group": filter_tools("INSPECT"),
         },
         "signals": {
-            "yield_bucket": "small", "variance_bucket": "high", "change_dir": "zero",
-            "change_bucket": "small", "measurement_bucket": "low", "lots_bucket": "medium",
-            "rework_bucket": "low", "window_bucket": "short"
+            "yield_severity": "small",
+            "variance_bucket": "high",
+            "change_dir": "zero",
+            "change_bucket": "small",
+            "measurement_bucket": "low",
+            "lots_bucket": "medium",
+            "rework_bucket": "low",
+            "window_bucket": "short",
         },
         "matched_template": "Matched: variance=high, measurement=low, window=short",
         "resolution": "Recalibrated measurement path; confirmed yield was stable after validation.",
-        "hints": ["measurement_validation", "scope_segmentation"]
+        "hints": ["measurement_validation", "scope_segmentation"],
     },
     {
         "title": "Etch cluster excursion limited to one tool group",
         "constraints": {
             "process_step": filter_steps("etch"),
-            "tool_group": filter_tools("ETCH")
+            "tool_group": filter_tools("ETCH"),
         },
         "signals": {
-            "yield_bucket": "medium", "variance_bucket": "medium", "change_dir": "neg",
-            "change_bucket": "medium", "measurement_bucket": "high", "lots_bucket": "small",
-            "rework_bucket": "medium", "window_bucket": "medium"
+            "yield_severity": "medium",
+            "variance_bucket": "medium",
+            "change_dir": "neg",
+            "change_bucket": "medium",
+            "measurement_bucket": "high",
+            "lots_bucket": "small",
+            "rework_bucket": "medium",
+            "window_bucket": "medium",
         },
         "matched_template": "Matched: context=tool_group, yield=medium, change=neg",
         "resolution": "Isolated to specific chamber; corrected config drift; monitored recovery.",
-        "hints": ["scope_segmentation", "recent_changes_review"]
+        "hints": ["scope_segmentation", "recent_changes_review"],
     },
     {
         "title": "Slow drift across sites over long window",
-        "constraints": {}, # No constraints -> Systemic
+        "constraints": {},
         "signals": {
-            "yield_bucket": "medium", "variance_bucket": "low", "change_dir": "neg",
-            "change_bucket": "small", "measurement_bucket": "medium", "lots_bucket": "large",
-            "rework_bucket": "medium", "window_bucket": "long"
+            "yield_severity": "medium",
+            "variance_bucket": "low",
+            "change_dir": "neg",
+            "change_bucket": "small",
+            "measurement_bucket": "medium",
+            "lots_bucket": "large",
+            "rework_bucket": "medium",
+            "window_bucket": "long",
         },
         "matched_template": "Matched: window=long, lots=large, drift-like change",
         "resolution": "Segmented by process_step; identified gradual parameter drift; escalated with evidence pack.",
-        "hints": ["scope_segmentation", "escalation_packaging"]
+        "hints": ["scope_segmentation", "escalation_packaging"],
     },
     {
         "title": "Yield shift after recent recipe change",
-        "constraints": {}, # Can happen anywhere
+        "constraints": {},
         "signals": {
-            "yield_bucket": "large", "variance_bucket": "medium", "change_dir": "neg",
-            "change_bucket": "large", "measurement_bucket": "high", "lots_bucket": "medium",
-            "rework_bucket": "high", "window_bucket": "short"
+            "yield_severity": "large",
+            "variance_bucket": "medium",
+            "change_dir": "neg",
+            "change_bucket": "large",
+            "measurement_bucket": "high",
+            "lots_bucket": "medium",
+            "rework_bucket": "high",
+            "window_bucket": "short",
         },
         "matched_template": "Matched: window=short, change=neg large, rework=high",
         "resolution": "Rolled back change; validated with A/B lots; documented change correlation.",
-        "hints": ["recent_changes_review", "escalation_packaging"]
+        "hints": ["recent_changes_review", "escalation_packaging"],
     },
     {
         "title": "Positive yield shift causing false alarms",
         "constraints": {},
         "signals": {
-            "yield_bucket": "none", "variance_bucket": "medium", "change_dir": "pos",
-            "change_bucket": "large", "measurement_bucket": "medium", "lots_bucket": "medium",
-            "rework_bucket": "low", "window_bucket": "short"
+            "yield_severity": "none",
+            "variance_bucket": "medium",
+            "change_dir": "pos",
+            "change_bucket": "large",
+            "measurement_bucket": "medium",
+            "lots_bucket": "medium",
+            "rework_bucket": "low",
+            "window_bucket": "short",
         },
         "matched_template": "Matched: change=pos, window=short",
         "resolution": "Validated new baseline; updated control limits to reflect improved performance.",
-        "hints": ["recent_changes_review", "measurement_validation"]
+        "hints": ["recent_changes_review", "measurement_validation"],
     },
     {
         "title": "Yield stable but rework rate exceeding limits",
         "constraints": {
             "process_step": filter_steps("litho") + filter_steps("dep"),
-            "tool_group": filter_tools("LITHO") + filter_tools("DEP")
+            "tool_group": filter_tools("LITHO") + filter_tools("DEP"),
         },
         "signals": {
-            "yield_bucket": "small", "variance_bucket": "low", "change_dir": "zero",
-            "change_bucket": "small", "measurement_bucket": "high", "lots_bucket": "large",
-            "rework_bucket": "high", "window_bucket": "medium"
+            "yield_severity": "small",
+            "variance_bucket": "low",
+            "change_dir": "zero",
+            "change_bucket": "small",
+            "measurement_bucket": "high",
+            "lots_bucket": "large",
+            "rework_bucket": "high",
+            "window_bucket": "medium",
         },
         "matched_template": "Matched: rework=high, yield=small",
         "resolution": "Identified litho overlay alignment issue; forced recalibration.",
-        "hints": ["scope_segmentation", "maintenance_logs_review"]
+        "hints": ["scope_segmentation", "maintenance_logs_review"],
     },
     {
         "title": "Inconsistent yield across large lot population",
         "constraints": {},
         "signals": {
-            "yield_bucket": "medium", "variance_bucket": "high", "change_dir": "neg",
-            "change_bucket": "medium", "measurement_bucket": "medium", "lots_bucket": "large",
-            "rework_bucket": "medium", "window_bucket": "medium"
+            "yield_severity": "medium",
+            "variance_bucket": "high",
+            "change_dir": "neg",
+            "change_bucket": "medium",
+            "measurement_bucket": "medium",
+            "lots_bucket": "large",
+            "rework_bucket": "medium",
+            "window_bucket": "medium",
         },
         "matched_template": "Matched: lots=large, variance=high",
         "resolution": "Correlated spread to raw material batch variance; quarantined specific batch.",
-        "hints": ["scope_segmentation", "recent_changes_review"]
+        "hints": ["scope_segmentation", "recent_changes_review"],
     },
     {
         "title": "High variance obscuring small yield degradation",
         "constraints": {},
         "signals": {
-            "yield_bucket": "small", "variance_bucket": "high", "change_dir": "neg",
-            "change_bucket": "small", "measurement_bucket": "medium", "lots_bucket": "medium",
-            "rework_bucket": "low", "window_bucket": "medium"
+            "yield_severity": "small",
+            "variance_bucket": "high",
+            "change_dir": "neg",
+            "change_bucket": "small",
+            "measurement_bucket": "medium",
+            "lots_bucket": "medium",
+            "rework_bucket": "low",
+            "window_bucket": "medium",
         },
         "matched_template": "Matched: variance=high, yield=small, window=medium",
         "resolution": "Improved segmentation granularity; reduced noise with filters; confirmed mild degradation.",
-        "hints": ["scope_segmentation", "measurement_validation"]
+        "hints": ["scope_segmentation", "measurement_validation"],
     },
     {
         "title": "Catastrophic yield drop on specific tool",
         "constraints": {
-            # Could happen anywhere, but usually distinct to active processing
-            "process_step": filter_steps("etch") + filter_steps("litho") + filter_steps("dep")
+            "process_step": filter_steps("etch") + filter_steps("litho") + filter_steps("dep"),
         },
         "signals": {
-            "yield_bucket": "large", "variance_bucket": "low", "change_dir": "neg",
-            "change_bucket": "large", "measurement_bucket": "high", "lots_bucket": "small",
-            "rework_bucket": "low", "window_bucket": "short"
+            "yield_severity": "large",
+            "variance_bucket": "low",
+            "change_dir": "neg",
+            "change_bucket": "large",
+            "measurement_bucket": "high",
+            "lots_bucket": "small",
+            "rework_bucket": "low",
+            "window_bucket": "short",
         },
         "matched_template": "Matched: yield=large drop, window=short",
         "resolution": "Emergency tool down; replaced failed RF generator; qualified tool recovery.",
-        "hints": ["maintenance_logs_review", "escalation_packaging"]
+        "hints": ["maintenance_logs_review", "escalation_packaging"],
     },
     {
         "title": "Gradual degradation approaching control limits",
         "constraints": {},
         "signals": {
-            "yield_bucket": "medium", "variance_bucket": "medium", "change_dir": "neg",
-            "change_bucket": "small", "measurement_bucket": "medium", "lots_bucket": "large",
-            "rework_bucket": "low", "window_bucket": "long"
+            "yield_severity": "medium",
+            "variance_bucket": "medium",
+            "change_dir": "neg",
+            "change_bucket": "small",
+            "measurement_bucket": "medium",
+            "lots_bucket": "large",
+            "rework_bucket": "low",
+            "window_bucket": "long",
         },
         "matched_template": "Matched: window=long, change=small neg",
         "resolution": "Scheduled preventive maintenance (PM) pulled forward; replaced aging consumables.",
-        "hints": ["scope_segmentation", "maintenance_logs_review"]
-    }
+        "hints": ["scope_segmentation", "maintenance_logs_review"],
+    },
 ]
 
-# --- 4. GENERATION LOGIC ---
+# --- 6. EXECUTION ---
 
 def generate_context(constraints):
-    """
-    Selects context based on family constraints.
-    If constraint exists (e.g., only 'etch'), pick from that subset.
-    Otherwise, pick from all REAL options.
-    """
-    # 1. Site: Usually random unless constrained (rare)
     site_pool = constraints.get("site", REAL_SITES)
     site = random.choice(site_pool) if site_pool else random.choice(REAL_SITES)
 
-    # 2. Tool Group
     tool_pool = constraints.get("tool_group", REAL_TOOL_GROUPS)
     tool_group = random.choice(tool_pool) if tool_pool else random.choice(REAL_TOOL_GROUPS)
 
-    # 3. Process Step
     step_pool = constraints.get("process_step", REAL_PROCESS_STEPS)
     process_step = random.choice(step_pool) if step_pool else random.choice(REAL_PROCESS_STEPS)
 
-    return {
-        "site": site,
-        "tool_group": tool_group,
-        "process_step": process_step
-    }
+    return {"site": site, "tool_group": tool_group, "process_step": process_step}
 
-def generate_metrics_with_physics(signals):
-    """
-    Generates metrics while respecting physical constraints.
-    - Ensures Yield + Change doesn't exceed 100% or drop < 0%.
-    - Handles the 'Positive Shift' vs 'High Yield' conflict.
-    """
-    metrics = {}
-    
-    # 1. Yield (The anchor)
-    y_min, y_max = BUCKET_RANGES["yield_bucket"][signals["yield_bucket"]]
-    yield_val = round(random.uniform(y_min, y_max), 2)
-    metrics["yield_pct"] = yield_val
-    
-    # 2. Change Magnitude (The dependent variable)
-    c_min, c_max = BUCKET_RANGES["change_bucket"][signals["change_bucket"]]
-    
-    # CLAMPING LOGIC (Option A)
-    # If change is positive, we must ensure we don't imply >100% yield or look ridiculous
-    # If yield is already 'none' (high ~93%), a 'large' pos change (+15) is impossible
-    if signals["change_dir"] == "pos":
-        # Calculate theoretical max room to grow
-        max_room = 100.0 - yield_val
-        # If the bucket range starts higher than max room, we have a physics conflict.
-        # Force it to be smaller.
-        if c_min > max_room:
-            # Fallback: Generate a small realistic shift instead of the bucket's requested large one
-            mag = random.uniform(0.1, max_room * 0.9)
-        else:
-            # Standard gen, but cap at max_room
-            mag = random.uniform(c_min, min(c_max, max_room))
-            
-        mag = abs(mag) # Ensure positive
 
-    elif signals["change_dir"] == "neg":
-        # If change is negative, we can't have dropped more than the yield existed (mostly safe for % yield)
-        # But generally safe unless yield is very low
-        mag = random.uniform(c_min, c_max)
-        mag = -abs(mag) # Ensure negative
+def generate_timestamp_realistic():
+    """
+    Generate timestamps with realistic clustering patterns.
+    - More events during weekdays
+    - Clustering around maintenance cycles (every ~30 days)
+    - Some random scatter
+    """
+    if np.random.random() < 0.3:
+        # Cluster around maintenance cycle
+        cycle_day = np.random.choice([30, 60, 90, 120, 150])
+        days_ago = cycle_day + np.random.randint(-5, 5)
     else:
-        mag = 0.0
+        # Random with preference for recent
+        days_ago = int(np.random.exponential(scale=40))
+        days_ago = min(days_ago, 180)
 
-    metrics["change_magnitude"] = round(mag, 2)
-    
-    # 3. Variance
-    v_min, v_max = BUCKET_RANGES["variance_bucket"][signals["variance_bucket"]]
-    metrics["metric_variance"] = round(random.uniform(v_min, v_max), 3)
-    
-    # 4. Confidence
-    m_min, m_max = BUCKET_RANGES["measurement_bucket"][signals["measurement_bucket"]]
-    metrics["measurement_confidence"] = round(random.uniform(m_min, m_max), 2)
-    
-    # 5. Lots
-    l_min, l_max = BUCKET_RANGES["lots_bucket"][signals["lots_bucket"]]
-    metrics["affected_lot_count"] = random.randint(l_min, l_max)
-    
-    # 6. Rework
-    r_min, r_max = BUCKET_RANGES["rework_bucket"][signals["rework_bucket"]]
-    metrics["rework_rate"] = round(random.uniform(r_min, r_max), 2)
-    
-    # 7. Time Window
-    w_min, w_max = BUCKET_RANGES["window_bucket"][signals["window_bucket"]]
-    metrics["time_window_hours"] = random.randint(w_min, w_max)
-    
-    return metrics
+    # Prefer weekdays
+    base_time = datetime.now(timezone.utc) - timedelta(days=int(days_ago))
+    while base_time.weekday() >= 5 and np.random.random() < 0.7:
+        days_ago += 1
+        base_time = datetime.now(timezone.utc) - timedelta(days=int(days_ago))
 
-def generate_timestamp():
-    """Returns an ISO timestamp randomly distributed over the last 180 days."""
-    days_ago = random.randint(0, 180)
-    # Add random seconds to avoid exact same time
-    seconds_offset = random.randint(0, 86400)
-    dt = datetime.now(timezone.utc) - timedelta(days=days_ago, seconds=seconds_offset)
+    # Time of day: prefer business hours
+    if np.random.random() < 0.8:
+        hour = np.random.randint(7, 18)
+    else:
+        hour = np.random.randint(0, 24)
+
+    seconds_offset = hour * 3600 + np.random.randint(0, 3600)
+    dt = datetime.now(timezone.utc) - timedelta(days=int(days_ago), seconds=int(seconds_offset))
+
     return dt.isoformat()
 
-# --- 5. EXECUTION ---
 
 def generate():
     cases = []
     case_counter = 1
+
+    # Set seeds for reproducibility
     random.seed(42)
-    
+    np.random.seed(42)
+
     for family in FAMILIES:
         for _ in range(5):
             case_id = f"C-{case_counter:03d}"
-            
-            # 1. Generate Context (Weighted/Constrained)
+
             context = generate_context(family.get("constraints", {}))
-            
-            # 2. Generate Metrics (Physics-Aware)
-            metrics = generate_metrics_with_physics(family["signals"])
-            
-            # Sanity Check
-            assert set(metrics.keys()) == METRIC_KEYS, f"Schema mismatch in {case_id}"
-            
+            metrics = generate_metrics_realistic(family["signals"], family["title"])
+
+            # Full validation
+            validate_case({"metrics": metrics}, family["signals"])
+
             case_record = {
                 "case_id": case_id,
-                "created_at": generate_timestamp(),
+                "created_at": generate_timestamp_realistic(),
                 "family": family["title"],
                 "title": family["title"],
                 "context": context,
@@ -341,17 +672,32 @@ def generate():
                 "signals": family["signals"],
                 "matched_signals_template": family["matched_template"],
                 "resolution_summary": family["resolution"],
-                "next_checks_hint": family["hints"]
+                "next_checks_hint": family["hints"],
             }
             cases.append(case_record)
             case_counter += 1
-            
+
     return cases
 
+
 if __name__ == "__main__":
-    print(f"Generating synthetic cases...")
-    data = generate()
-    os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        json.dump(data, f, indent=2)
-    print(f"✅ Successfully wrote {len(data)} high-fidelity cases to:\n   {OUTPUT_PATH}")
+    print("Generating realistic synthetic cases with research-backed distributions...")
+    try:
+        data = generate()
+        os.makedirs(os.path.dirname(OUTPUT_PATH), exist_ok=True)
+        with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+        print(f"[OK] Successfully wrote {len(data)} realistic cases to:\n   {OUTPUT_PATH}")
+        print("\nImprovements applied:")
+        print("  - Beta distributions for yields (right-skewed, realistic clustering)")
+        print("  - Log-normal for variance (multiplicative error patterns)")
+        print("  - Poisson for lot counts (discrete event modeling)")
+        print("  - Truncated normal for measurement confidence")
+        print("  - Correlated metrics (variance<->confidence, change<->rework, etc.)")
+        print("  - Temporal clustering (maintenance cycles, weekday preference)")
+    except ValueError as e:
+        print(f"\n FATAL DATA DEFINITION ERROR:\n{e}")
+        sys.exit(1)
+    except AssertionError as e:
+        print(f"\n FATAL VALIDATION ERROR:\n{e}")
+        sys.exit(1)
