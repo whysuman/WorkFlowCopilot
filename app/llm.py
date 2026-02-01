@@ -187,7 +187,7 @@ def _call_huggingface(system_prompt: str, user_prompt: str) -> Optional[str]:
     try:
         from huggingface_hub import InferenceClient
         token = os.environ.get("HF_TOKEN", "")
-        client = InferenceClient(token=token)
+        client = InferenceClient(token=token,timeout=120)#Decrease timeout in production
 
         messages = [
             {"role": "system", "content": system_prompt},

@@ -1,7 +1,7 @@
 [
   {
     "case_id": "C-001",
-    "created_at": "2025-09-01T10:33:57.839529+00:00",
+    "created_at": "2025-12-01T10:58:39.024695+00:00",
     "family": "Yield dip coincident with metrology instability",
     "title": "Yield dip coincident with metrology instability",
     "context": {
@@ -10,16 +10,16 @@
       "process_step": "inspection"
     },
     "metrics": {
-      "yield_pct": 89.83,
+      "yield_pct": 91.47,
       "change_magnitude": 0.0,
-      "metric_variance": 0.435,
-      "measurement_confidence": 0.05,
-      "affected_lot_count": 9,
-      "rework_rate": 1.78,
-      "time_window_hours": 2
+      "metric_variance": 0.595,
+      "measurement_confidence": 0.1,
+      "affected_lot_count": 7,
+      "rework_rate": 2.09,
+      "time_window_hours": 3
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "high",
       "change_dir": "zero",
       "change_bucket": "small",
@@ -37,25 +37,25 @@
   },
   {
     "case_id": "C-002",
-    "created_at": "2025-09-13T10:39:12.839566+00:00",
+    "created_at": "2025-09-07T09:42:02.025113+00:00",
     "family": "Yield dip coincident with metrology instability",
     "title": "Yield dip coincident with metrology instability",
     "context": {
-      "site": "Plant-A",
+      "site": "Plant-B",
       "tool_group": "INSPECT-GROUP-1",
       "process_step": "metrology"
     },
     "metrics": {
-      "yield_pct": 89.74,
+      "yield_pct": 89.87,
       "change_magnitude": 0.0,
-      "metric_variance": 0.633,
-      "measurement_confidence": 0.01,
-      "affected_lot_count": 5,
-      "rework_rate": 1.43,
-      "time_window_hours": 12
+      "metric_variance": 0.503,
+      "measurement_confidence": 0.1,
+      "affected_lot_count": 8,
+      "rework_rate": 2.09,
+      "time_window_hours": 8
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "high",
       "change_dir": "zero",
       "change_bucket": "small",
@@ -73,25 +73,25 @@
   },
   {
     "case_id": "C-003",
-    "created_at": "2025-12-22T18:05:18.839585+00:00",
+    "created_at": "2026-01-04T07:30:47.025469+00:00",
     "family": "Yield dip coincident with metrology instability",
     "title": "Yield dip coincident with metrology instability",
     "context": {
-      "site": "Plant-B",
+      "site": "Plant-A",
       "tool_group": "INSPECT-GROUP-1",
       "process_step": "inspection"
     },
     "metrics": {
-      "yield_pct": 91.75,
+      "yield_pct": 92.23,
       "change_magnitude": 0.0,
-      "metric_variance": 0.364,
-      "measurement_confidence": 0.4,
-      "affected_lot_count": 9,
-      "rework_rate": 0.85,
-      "time_window_hours": 5
+      "metric_variance": 0.456,
+      "measurement_confidence": 0.1,
+      "affected_lot_count": 8,
+      "rework_rate": 2.09,
+      "time_window_hours": 6
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "high",
       "change_dir": "zero",
       "change_bucket": "small",
@@ -109,25 +109,25 @@
   },
   {
     "case_id": "C-004",
-    "created_at": "2025-10-05T06:24:15.839597+00:00",
+    "created_at": "2025-11-24T18:07:57.025775+00:00",
     "family": "Yield dip coincident with metrology instability",
     "title": "Yield dip coincident with metrology instability",
     "context": {
-      "site": "Plant-C",
+      "site": "Plant-A",
       "tool_group": "INSPECT-GROUP-1",
       "process_step": "metrology"
     },
     "metrics": {
-      "yield_pct": 90.29,
+      "yield_pct": 90.87,
       "change_magnitude": 0.0,
-      "metric_variance": 0.554,
-      "measurement_confidence": 0.17,
+      "metric_variance": 0.573,
+      "measurement_confidence": 0.12,
       "affected_lot_count": 6,
-      "rework_rate": 1.61,
-      "time_window_hours": 12
+      "rework_rate": 2.09,
+      "time_window_hours": 6
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "high",
       "change_dir": "zero",
       "change_bucket": "small",
@@ -145,25 +145,25 @@
   },
   {
     "case_id": "C-005",
-    "created_at": "2025-08-03T23:23:43.839609+00:00",
+    "created_at": "2026-01-21T09:30:55.026085+00:00",
     "family": "Yield dip coincident with metrology instability",
     "title": "Yield dip coincident with metrology instability",
     "context": {
-      "site": "Plant-A",
+      "site": "Plant-B",
       "tool_group": "INSPECT-GROUP-1",
       "process_step": "metrology"
     },
     "metrics": {
-      "yield_pct": 90.88,
+      "yield_pct": 89.37,
       "change_magnitude": 0.0,
-      "metric_variance": 0.808,
-      "measurement_confidence": 0.31,
-      "affected_lot_count": 10,
-      "rework_rate": 0.72,
-      "time_window_hours": 4
+      "metric_variance": 0.899,
+      "measurement_confidence": 0.1,
+      "affected_lot_count": 9,
+      "rework_rate": 2.09,
+      "time_window_hours": 5
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "high",
       "change_dir": "zero",
       "change_bucket": "small",
@@ -181,25 +181,25 @@
   },
   {
     "case_id": "C-006",
-    "created_at": "2025-12-20T12:26:59.839623+00:00",
+    "created_at": "2025-11-20T08:37:46.026370+00:00",
     "family": "Etch cluster excursion limited to one tool group",
     "title": "Etch cluster excursion limited to one tool group",
     "context": {
-      "site": "Plant-A",
-      "tool_group": "ETCH-CLUSTER-1",
+      "site": "Plant-B",
+      "tool_group": "ETCH-CLUSTER-2",
       "process_step": "etch"
     },
     "metrics": {
-      "yield_pct": 88.77,
-      "change_magnitude": -9.15,
-      "metric_variance": 0.325,
-      "measurement_confidence": 0.88,
+      "yield_pct": 82.66,
+      "change_magnitude": -6.076,
+      "metric_variance": 0.262,
+      "measurement_confidence": 0.97,
       "affected_lot_count": 2,
-      "rework_rate": 5.85,
-      "time_window_hours": 36
+      "rework_rate": 6.39,
+      "time_window_hours": 42
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "medium",
@@ -217,25 +217,25 @@
   },
   {
     "case_id": "C-007",
-    "created_at": "2025-10-04T12:06:44.839635+00:00",
+    "created_at": "2025-10-14T10:15:33.026639+00:00",
     "family": "Etch cluster excursion limited to one tool group",
     "title": "Etch cluster excursion limited to one tool group",
     "context": {
-      "site": "Plant-C",
-      "tool_group": "ETCH-CLUSTER-1",
+      "site": "Plant-D",
+      "tool_group": "ETCH-CLUSTER-2",
       "process_step": "etch"
     },
     "metrics": {
-      "yield_pct": 86.25,
-      "change_magnitude": -8.13,
-      "metric_variance": 0.174,
-      "measurement_confidence": 0.93,
+      "yield_pct": 83.37,
+      "change_magnitude": -8.32,
+      "metric_variance": 0.16,
+      "measurement_confidence": 1.0,
       "affected_lot_count": 3,
       "rework_rate": 6.4,
-      "time_window_hours": 23
+      "time_window_hours": 29
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "medium",
@@ -253,25 +253,25 @@
   },
   {
     "case_id": "C-008",
-    "created_at": "2025-12-07T05:16:38.839646+00:00",
+    "created_at": "2025-12-29T15:11:57.026910+00:00",
     "family": "Etch cluster excursion limited to one tool group",
     "title": "Etch cluster excursion limited to one tool group",
     "context": {
-      "site": "Plant-C",
-      "tool_group": "ETCH-CLUSTER-1",
+      "site": "Plant-B",
+      "tool_group": "ETCH-CLUSTER-2",
       "process_step": "etch"
     },
     "metrics": {
-      "yield_pct": 87.5,
-      "change_magnitude": -8.68,
-      "metric_variance": 0.204,
-      "measurement_confidence": 0.82,
-      "affected_lot_count": 2,
-      "rework_rate": 4.47,
-      "time_window_hours": 17
+      "yield_pct": 84.33,
+      "change_magnitude": -5.335,
+      "metric_variance": 0.274,
+      "measurement_confidence": 0.97,
+      "affected_lot_count": 1,
+      "rework_rate": 6.49,
+      "time_window_hours": 33
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "medium",
@@ -289,7 +289,7 @@
   },
   {
     "case_id": "C-009",
-    "created_at": "2025-11-24T04:38:37.839657+00:00",
+    "created_at": "2026-01-10T00:00:47.027190+00:00",
     "family": "Etch cluster excursion limited to one tool group",
     "title": "Etch cluster excursion limited to one tool group",
     "context": {
@@ -298,16 +298,16 @@
       "process_step": "etch"
     },
     "metrics": {
-      "yield_pct": 83.52,
-      "change_magnitude": -9.5,
-      "metric_variance": 0.247,
-      "measurement_confidence": 0.86,
+      "yield_pct": 81.52,
+      "change_magnitude": -6.451,
+      "metric_variance": 0.261,
+      "measurement_confidence": 0.96,
       "affected_lot_count": 1,
-      "rework_rate": 6.5,
-      "time_window_hours": 47
+      "rework_rate": 8.09,
+      "time_window_hours": 29
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "medium",
@@ -325,25 +325,25 @@
   },
   {
     "case_id": "C-010",
-    "created_at": "2025-08-23T20:06:10.839668+00:00",
+    "created_at": "2026-01-18T21:49:05.027469+00:00",
     "family": "Etch cluster excursion limited to one tool group",
     "title": "Etch cluster excursion limited to one tool group",
     "context": {
-      "site": "Plant-D",
-      "tool_group": "ETCH-CLUSTER-2",
+      "site": "Plant-C",
+      "tool_group": "ETCH-CLUSTER-1",
       "process_step": "etch"
     },
     "metrics": {
-      "yield_pct": 81.95,
-      "change_magnitude": -9.99,
-      "metric_variance": 0.257,
-      "measurement_confidence": 0.83,
-      "affected_lot_count": 1,
-      "rework_rate": 7.18,
-      "time_window_hours": 22
+      "yield_pct": 83.45,
+      "change_magnitude": -6.192,
+      "metric_variance": 0.277,
+      "measurement_confidence": 1.0,
+      "affected_lot_count": 2,
+      "rework_rate": 6.04,
+      "time_window_hours": 34
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "medium",
@@ -361,25 +361,25 @@
   },
   {
     "case_id": "C-011",
-    "created_at": "2025-08-09T21:45:25.839679+00:00",
+    "created_at": "2026-01-20T11:28:56.027734+00:00",
     "family": "Slow drift across sites over long window",
     "title": "Slow drift across sites over long window",
     "context": {
       "site": "Plant-D",
-      "tool_group": "DEP-STACK-1",
-      "process_step": "lithography"
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 83.42,
-      "change_magnitude": -2.42,
-      "metric_variance": 0.076,
-      "measurement_confidence": 0.58,
-      "affected_lot_count": 46,
-      "rework_rate": 7.18,
-      "time_window_hours": 50
+      "yield_pct": 84.08,
+      "change_magnitude": -2.905,
+      "metric_variance": 0.095,
+      "measurement_confidence": 0.69,
+      "affected_lot_count": 609,
+      "rework_rate": 5.06,
+      "time_window_hours": 632
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "low",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -397,25 +397,25 @@
   },
   {
     "case_id": "C-012",
-    "created_at": "2025-12-16T07:26:37.839692+00:00",
+    "created_at": "2025-12-03T08:47:35.028024+00:00",
     "family": "Slow drift across sites over long window",
     "title": "Slow drift across sites over long window",
     "context": {
       "site": "Plant-C",
-      "tool_group": "INSPECT-GROUP-1",
+      "tool_group": "DEP-STACK-1",
       "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 80.99,
-      "change_magnitude": -1.8,
-      "metric_variance": 0.074,
-      "measurement_confidence": 0.79,
-      "affected_lot_count": 27,
-      "rework_rate": 7.83,
-      "time_window_hours": 146
+      "yield_pct": 82.45,
+      "change_magnitude": -2.158,
+      "metric_variance": 0.064,
+      "measurement_confidence": 0.58,
+      "affected_lot_count": 620,
+      "rework_rate": 5.48,
+      "time_window_hours": 612
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "low",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -433,25 +433,25 @@
   },
   {
     "case_id": "C-013",
-    "created_at": "2025-09-18T01:54:25.839713+00:00",
+    "created_at": "2025-10-02T10:52:31.028310+00:00",
     "family": "Slow drift across sites over long window",
     "title": "Slow drift across sites over long window",
     "context": {
       "site": "Plant-A",
       "tool_group": "INSPECT-GROUP-1",
-      "process_step": "deposition"
+      "process_step": "inspection"
     },
     "metrics": {
-      "yield_pct": 87.49,
-      "change_magnitude": -2.08,
-      "metric_variance": 0.038,
-      "measurement_confidence": 0.62,
-      "affected_lot_count": 21,
-      "rework_rate": 5.28,
-      "time_window_hours": 148
+      "yield_pct": 84.79,
+      "change_magnitude": -1.805,
+      "metric_variance": 0.136,
+      "measurement_confidence": 0.68,
+      "affected_lot_count": 633,
+      "rework_rate": 5.21,
+      "time_window_hours": 649
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "low",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -469,25 +469,25 @@
   },
   {
     "case_id": "C-014",
-    "created_at": "2025-09-07T23:03:37.839730+00:00",
+    "created_at": "2026-01-12T17:03:50.028573+00:00",
     "family": "Slow drift across sites over long window",
     "title": "Slow drift across sites over long window",
     "context": {
-      "site": "Plant-C",
+      "site": "Plant-A",
       "tool_group": "LITHO-LINE-2",
       "process_step": "lithography"
     },
     "metrics": {
-      "yield_pct": 81.0,
-      "change_magnitude": -1.52,
-      "metric_variance": 0.148,
-      "measurement_confidence": 0.74,
-      "affected_lot_count": 26,
-      "rework_rate": 2.44,
-      "time_window_hours": 161
+      "yield_pct": 86.6,
+      "change_magnitude": -1.219,
+      "metric_variance": 0.07,
+      "measurement_confidence": 0.64,
+      "affected_lot_count": 624,
+      "rework_rate": 4.45,
+      "time_window_hours": 640
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "low",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -505,25 +505,25 @@
   },
   {
     "case_id": "C-015",
-    "created_at": "2025-11-24T06:42:56.839742+00:00",
+    "created_at": "2025-09-16T12:38:02.028832+00:00",
     "family": "Slow drift across sites over long window",
     "title": "Slow drift across sites over long window",
     "context": {
-      "site": "Plant-A",
+      "site": "Plant-C",
       "tool_group": "INSPECT-GROUP-1",
-      "process_step": "inspection"
+      "process_step": "metrology"
     },
     "metrics": {
-      "yield_pct": 87.26,
-      "change_magnitude": -3.91,
-      "metric_variance": 0.085,
-      "measurement_confidence": 0.55,
-      "affected_lot_count": 41,
-      "rework_rate": 7.69,
-      "time_window_hours": 70
+      "yield_pct": 84.92,
+      "change_magnitude": -2.594,
+      "metric_variance": 0.069,
+      "measurement_confidence": 0.64,
+      "affected_lot_count": 643,
+      "rework_rate": 4.27,
+      "time_window_hours": 639
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "low",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -541,25 +541,25 @@
   },
   {
     "case_id": "C-016",
-    "created_at": "2025-09-20T09:29:22.839757+00:00",
+    "created_at": "2025-09-30T12:20:31.029110+00:00",
     "family": "Yield shift after recent recipe change",
     "title": "Yield shift after recent recipe change",
     "context": {
-      "site": "Plant-D",
-      "tool_group": "ETCH-CLUSTER-2",
-      "process_step": "metrology"
+      "site": "Plant-C",
+      "tool_group": "DEP-STACK-1",
+      "process_step": "etch"
     },
     "metrics": {
-      "yield_pct": 72.58,
-      "change_magnitude": -20.38,
-      "metric_variance": 0.295,
-      "measurement_confidence": 0.89,
+      "yield_pct": 16.97,
+      "change_magnitude": -57.514,
+      "metric_variance": 0.301,
+      "measurement_confidence": 0.99,
       "affected_lot_count": 9,
-      "rework_rate": 19.08,
-      "time_window_hours": 8
+      "rework_rate": 99.99,
+      "time_window_hours": 3
     },
     "signals": {
-      "yield_bucket": "large",
+      "yield_severity": "large",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "large",
@@ -577,25 +577,25 @@
   },
   {
     "case_id": "C-017",
-    "created_at": "2026-01-15T17:35:32.839767+00:00",
+    "created_at": "2026-01-08T07:51:43.029665+00:00",
     "family": "Yield shift after recent recipe change",
     "title": "Yield shift after recent recipe change",
     "context": {
       "site": "Plant-A",
-      "tool_group": "ETCH-CLUSTER-2",
+      "tool_group": "ETCH-CLUSTER-1",
       "process_step": "etch"
     },
     "metrics": {
-      "yield_pct": 51.91,
-      "change_magnitude": -10.41,
-      "metric_variance": 0.265,
-      "measurement_confidence": 0.92,
-      "affected_lot_count": 4,
-      "rework_rate": 9.3,
-      "time_window_hours": 11
+      "yield_pct": 51.9,
+      "change_magnitude": -32.152,
+      "metric_variance": 0.359,
+      "measurement_confidence": 1.0,
+      "affected_lot_count": 10,
+      "rework_rate": 99.99,
+      "time_window_hours": 5
     },
     "signals": {
-      "yield_bucket": "large",
+      "yield_severity": "large",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "large",
@@ -613,25 +613,25 @@
   },
   {
     "case_id": "C-018",
-    "created_at": "2025-09-05T08:43:06.839778+00:00",
+    "created_at": "2025-10-01T10:00:41.030254+00:00",
     "family": "Yield shift after recent recipe change",
     "title": "Yield shift after recent recipe change",
     "context": {
-      "site": "Plant-A",
+      "site": "Plant-C",
       "tool_group": "ETCH-CLUSTER-1",
-      "process_step": "deposition"
+      "process_step": "etch"
     },
     "metrics": {
-      "yield_pct": 52.12,
-      "change_magnitude": -13.65,
-      "metric_variance": 0.287,
-      "measurement_confidence": 0.85,
-      "affected_lot_count": 5,
-      "rework_rate": 20.32,
-      "time_window_hours": 10
+      "yield_pct": 29.66,
+      "change_magnitude": -28.889,
+      "metric_variance": 0.301,
+      "measurement_confidence": 0.95,
+      "affected_lot_count": 6,
+      "rework_rate": 99.99,
+      "time_window_hours": 9
     },
     "signals": {
-      "yield_bucket": "large",
+      "yield_severity": "large",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "large",
@@ -649,25 +649,25 @@
   },
   {
     "case_id": "C-019",
-    "created_at": "2025-08-11T02:08:10.839788+00:00",
+    "created_at": "2026-01-19T12:11:51.030658+00:00",
     "family": "Yield shift after recent recipe change",
     "title": "Yield shift after recent recipe change",
     "context": {
-      "site": "Plant-B",
+      "site": "Plant-A",
       "tool_group": "LITHO-LINE-2",
-      "process_step": "inspection"
+      "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 55.69,
-      "change_magnitude": -11.54,
-      "metric_variance": 0.242,
-      "measurement_confidence": 0.89,
-      "affected_lot_count": 7,
-      "rework_rate": 22.7,
-      "time_window_hours": 1
+      "yield_pct": 65.48,
+      "change_magnitude": -18.079,
+      "metric_variance": 0.16,
+      "measurement_confidence": 0.98,
+      "affected_lot_count": 10,
+      "rework_rate": 99.99,
+      "time_window_hours": 6
     },
     "signals": {
-      "yield_bucket": "large",
+      "yield_severity": "large",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "large",
@@ -685,25 +685,25 @@
   },
   {
     "case_id": "C-020",
-    "created_at": "2025-12-15T15:47:10.839798+00:00",
+    "created_at": "2025-09-04T07:12:32.030932+00:00",
     "family": "Yield shift after recent recipe change",
     "title": "Yield shift after recent recipe change",
     "context": {
-      "site": "Plant-A",
-      "tool_group": "ETCH-CLUSTER-1",
-      "process_step": "inspection"
+      "site": "Plant-D",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 71.77,
-      "change_magnitude": -22.03,
-      "metric_variance": 0.181,
-      "measurement_confidence": 0.85,
-      "affected_lot_count": 8,
-      "rework_rate": 15.68,
-      "time_window_hours": 7
+      "yield_pct": 16.42,
+      "change_magnitude": -53.076,
+      "metric_variance": 0.227,
+      "measurement_confidence": 0.95,
+      "affected_lot_count": 7,
+      "rework_rate": 99.99,
+      "time_window_hours": 5
     },
     "signals": {
-      "yield_bucket": "large",
+      "yield_severity": "large",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "large",
@@ -721,25 +721,25 @@
   },
   {
     "case_id": "C-021",
-    "created_at": "2025-12-01T19:52:21.839811+00:00",
+    "created_at": "2025-10-01T15:08:40.031203+00:00",
     "family": "Positive yield shift causing false alarms",
     "title": "Positive yield shift causing false alarms",
     "context": {
-      "site": "Plant-D",
-      "tool_group": "ETCH-CLUSTER-2",
-      "process_step": "lithography"
+      "site": "Plant-B",
+      "tool_group": "LITHO-LINE-1",
+      "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 93.49,
-      "change_magnitude": 5.06,
-      "metric_variance": 0.265,
-      "measurement_confidence": 0.52,
-      "affected_lot_count": 8,
-      "rework_rate": 1.67,
-      "time_window_hours": 2
+      "yield_pct": 97.03,
+      "change_magnitude": 47.98,
+      "metric_variance": 0.269,
+      "measurement_confidence": 0.67,
+      "affected_lot_count": 10,
+      "rework_rate": 2.09,
+      "time_window_hours": 5
     },
     "signals": {
-      "yield_bucket": "none",
+      "yield_severity": "none",
       "variance_bucket": "medium",
       "change_dir": "pos",
       "change_bucket": "large",
@@ -757,25 +757,25 @@
   },
   {
     "case_id": "C-022",
-    "created_at": "2025-11-18T10:31:35.839825+00:00",
+    "created_at": "2025-12-24T09:22:09.031456+00:00",
     "family": "Positive yield shift causing false alarms",
     "title": "Positive yield shift causing false alarms",
     "context": {
-      "site": "Plant-D",
-      "tool_group": "LITHO-LINE-2",
-      "process_step": "inspection"
+      "site": "Plant-B",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 92.46,
-      "change_magnitude": 2.78,
-      "metric_variance": 0.171,
+      "yield_pct": 95.24,
+      "change_magnitude": 36.78,
+      "metric_variance": 0.252,
       "measurement_confidence": 0.62,
-      "affected_lot_count": 7,
-      "rework_rate": 0.53,
-      "time_window_hours": 8
+      "affected_lot_count": 6,
+      "rework_rate": 2.09,
+      "time_window_hours": 2
     },
     "signals": {
-      "yield_bucket": "none",
+      "yield_severity": "none",
       "variance_bucket": "medium",
       "change_dir": "pos",
       "change_bucket": "large",
@@ -793,25 +793,25 @@
   },
   {
     "case_id": "C-023",
-    "created_at": "2025-09-03T08:34:06.839844+00:00",
+    "created_at": "2025-12-08T14:38:34.031737+00:00",
     "family": "Positive yield shift causing false alarms",
     "title": "Positive yield shift causing false alarms",
     "context": {
-      "site": "Plant-D",
-      "tool_group": "ETCH-CLUSTER-2",
+      "site": "Plant-A",
+      "tool_group": "DEP-STACK-1",
       "process_step": "etch"
     },
     "metrics": {
-      "yield_pct": 92.84,
-      "change_magnitude": 6.25,
-      "metric_variance": 0.27,
-      "measurement_confidence": 0.67,
-      "affected_lot_count": 9,
-      "rework_rate": 0.63,
-      "time_window_hours": 1
+      "yield_pct": 95.64,
+      "change_magnitude": 42.62,
+      "metric_variance": 0.195,
+      "measurement_confidence": 0.63,
+      "affected_lot_count": 4,
+      "rework_rate": 2.09,
+      "time_window_hours": 4
     },
     "signals": {
-      "yield_bucket": "none",
+      "yield_severity": "none",
       "variance_bucket": "medium",
       "change_dir": "pos",
       "change_bucket": "large",
@@ -829,25 +829,25 @@
   },
   {
     "case_id": "C-024",
-    "created_at": "2025-11-28T04:50:59.839856+00:00",
+    "created_at": "2025-12-12T16:44:09.032040+00:00",
     "family": "Positive yield shift causing false alarms",
     "title": "Positive yield shift causing false alarms",
     "context": {
       "site": "Plant-B",
-      "tool_group": "ETCH-CLUSTER-1",
-      "process_step": "metrology"
+      "tool_group": "ETCH-CLUSTER-2",
+      "process_step": "inspection"
     },
     "metrics": {
-      "yield_pct": 91.86,
-      "change_magnitude": 1.44,
-      "metric_variance": 0.273,
+      "yield_pct": 98.22,
+      "change_magnitude": 44.11,
+      "metric_variance": 0.178,
       "measurement_confidence": 0.71,
-      "affected_lot_count": 5,
-      "rework_rate": 0.81,
-      "time_window_hours": 10
+      "affected_lot_count": 4,
+      "rework_rate": 2.09,
+      "time_window_hours": 7
     },
     "signals": {
-      "yield_bucket": "none",
+      "yield_severity": "none",
       "variance_bucket": "medium",
       "change_dir": "pos",
       "change_bucket": "large",
@@ -865,25 +865,25 @@
   },
   {
     "case_id": "C-025",
-    "created_at": "2025-11-30T16:15:25.839868+00:00",
+    "created_at": "2025-10-19T10:05:14.032296+00:00",
     "family": "Positive yield shift causing false alarms",
     "title": "Positive yield shift causing false alarms",
     "context": {
-      "site": "Plant-A",
-      "tool_group": "DEP-STACK-1",
-      "process_step": "lithography"
+      "site": "Plant-D",
+      "tool_group": "LITHO-LINE-1",
+      "process_step": "metrology"
     },
     "metrics": {
-      "yield_pct": 93.39,
-      "change_magnitude": 3.51,
-      "metric_variance": 0.259,
-      "measurement_confidence": 0.78,
-      "affected_lot_count": 5,
-      "rework_rate": 1.34,
+      "yield_pct": 96.74,
+      "change_magnitude": 71.13,
+      "metric_variance": 0.359,
+      "measurement_confidence": 0.62,
+      "affected_lot_count": 4,
+      "rework_rate": 2.09,
       "time_window_hours": 6
     },
     "signals": {
-      "yield_bucket": "none",
+      "yield_severity": "none",
       "variance_bucket": "medium",
       "change_dir": "pos",
       "change_bucket": "large",
@@ -901,25 +901,25 @@
   },
   {
     "case_id": "C-026",
-    "created_at": "2026-01-12T06:21:11.839879+00:00",
+    "created_at": "2025-12-28T10:46:29.032540+00:00",
     "family": "Yield stable but rework rate exceeding limits",
     "title": "Yield stable but rework rate exceeding limits",
     "context": {
-      "site": "Plant-D",
-      "tool_group": "LITHO-LINE-1",
+      "site": "Plant-B",
+      "tool_group": "DEP-STACK-1",
       "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 90.55,
+      "yield_pct": 90.49,
       "change_magnitude": 0.0,
-      "metric_variance": 0.14,
-      "measurement_confidence": 0.99,
-      "affected_lot_count": 11,
-      "rework_rate": 15.85,
-      "time_window_hours": 19
+      "metric_variance": 0.092,
+      "measurement_confidence": 0.93,
+      "affected_lot_count": 616,
+      "rework_rate": 95.35,
+      "time_window_hours": 33
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "low",
       "change_dir": "zero",
       "change_bucket": "small",
@@ -937,25 +937,25 @@
   },
   {
     "case_id": "C-027",
-    "created_at": "2025-10-10T06:08:59.839889+00:00",
+    "created_at": "2025-12-04T09:29:51.032797+00:00",
     "family": "Yield stable but rework rate exceeding limits",
     "title": "Yield stable but rework rate exceeding limits",
     "context": {
-      "site": "Plant-B",
-      "tool_group": "DEP-STACK-1",
-      "process_step": "deposition"
+      "site": "Plant-A",
+      "tool_group": "LITHO-LINE-1",
+      "process_step": "lithography"
     },
     "metrics": {
-      "yield_pct": 89.45,
+      "yield_pct": 89.3,
       "change_magnitude": 0.0,
-      "metric_variance": 0.059,
-      "measurement_confidence": 0.82,
-      "affected_lot_count": 26,
-      "rework_rate": 14.35,
-      "time_window_hours": 23
+      "metric_variance": 0.061,
+      "measurement_confidence": 0.99,
+      "affected_lot_count": 606,
+      "rework_rate": 62.55,
+      "time_window_hours": 26
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "low",
       "change_dir": "zero",
       "change_bucket": "small",
@@ -973,25 +973,25 @@
   },
   {
     "case_id": "C-028",
-    "created_at": "2025-11-24T21:43:30.839899+00:00",
+    "created_at": "2025-10-06T09:29:41.033048+00:00",
     "family": "Yield stable but rework rate exceeding limits",
     "title": "Yield stable but rework rate exceeding limits",
     "context": {
       "site": "Plant-C",
-      "tool_group": "DEP-STACK-1",
-      "process_step": "lithography"
+      "tool_group": "LITHO-LINE-2",
+      "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 91.27,
+      "yield_pct": 91.72,
       "change_magnitude": 0.0,
-      "metric_variance": 0.088,
-      "measurement_confidence": 0.99,
-      "affected_lot_count": 17,
-      "rework_rate": 23.97,
-      "time_window_hours": 21
+      "metric_variance": 0.09,
+      "measurement_confidence": 0.98,
+      "affected_lot_count": 623,
+      "rework_rate": 49.73,
+      "time_window_hours": 32
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "low",
       "change_dir": "zero",
       "change_bucket": "small",
@@ -1009,25 +1009,25 @@
   },
   {
     "case_id": "C-029",
-    "created_at": "2025-09-23T08:08:27.839909+00:00",
+    "created_at": "2026-01-15T12:26:18.033301+00:00",
     "family": "Yield stable but rework rate exceeding limits",
     "title": "Yield stable but rework rate exceeding limits",
     "context": {
       "site": "Plant-A",
-      "tool_group": "DEP-STACK-1",
-      "process_step": "lithography"
+      "tool_group": "LITHO-LINE-1",
+      "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 89.93,
+      "yield_pct": 91.31,
       "change_magnitude": 0.0,
-      "metric_variance": 0.095,
+      "metric_variance": 0.115,
       "measurement_confidence": 0.95,
-      "affected_lot_count": 24,
-      "rework_rate": 19.72,
-      "time_window_hours": 29
+      "affected_lot_count": 560,
+      "rework_rate": 81.63,
+      "time_window_hours": 25
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "low",
       "change_dir": "zero",
       "change_bucket": "small",
@@ -1045,25 +1045,25 @@
   },
   {
     "case_id": "C-030",
-    "created_at": "2025-12-20T09:50:27.839919+00:00",
+    "created_at": "2025-09-01T07:08:45.033572+00:00",
     "family": "Yield stable but rework rate exceeding limits",
     "title": "Yield stable but rework rate exceeding limits",
     "context": {
-      "site": "Plant-C",
-      "tool_group": "LITHO-LINE-1",
-      "process_step": "lithography"
+      "site": "Plant-B",
+      "tool_group": "DEP-STACK-1",
+      "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 91.16,
+      "yield_pct": 90.59,
       "change_magnitude": 0.0,
-      "metric_variance": 0.126,
-      "measurement_confidence": 0.82,
-      "affected_lot_count": 32,
-      "rework_rate": 21.13,
-      "time_window_hours": 29
+      "metric_variance": 0.119,
+      "measurement_confidence": 0.95,
+      "affected_lot_count": 604,
+      "rework_rate": 61.43,
+      "time_window_hours": 27
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "low",
       "change_dir": "zero",
       "change_bucket": "small",
@@ -1081,25 +1081,25 @@
   },
   {
     "case_id": "C-031",
-    "created_at": "2025-12-24T10:16:46.839930+00:00",
+    "created_at": "2026-01-13T05:45:21.033859+00:00",
     "family": "Inconsistent yield across large lot population",
     "title": "Inconsistent yield across large lot population",
     "context": {
       "site": "Plant-D",
-      "tool_group": "DEP-STACK-1",
-      "process_step": "lithography"
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "inspection"
     },
     "metrics": {
-      "yield_pct": 81.0,
-      "change_magnitude": -9.68,
-      "metric_variance": 0.733,
-      "measurement_confidence": 0.55,
-      "affected_lot_count": 13,
-      "rework_rate": 7.02,
-      "time_window_hours": 48
+      "yield_pct": 83.89,
+      "change_magnitude": -10.099,
+      "metric_variance": 0.36,
+      "measurement_confidence": 0.64,
+      "affected_lot_count": 609,
+      "rework_rate": 8.09,
+      "time_window_hours": 36
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "high",
       "change_dir": "neg",
       "change_bucket": "medium",
@@ -1117,25 +1117,25 @@
   },
   {
     "case_id": "C-032",
-    "created_at": "2025-08-13T22:11:06.839945+00:00",
+    "created_at": "2025-11-12T08:33:00.034124+00:00",
     "family": "Inconsistent yield across large lot population",
     "title": "Inconsistent yield across large lot population",
     "context": {
       "site": "Plant-B",
-      "tool_group": "ETCH-CLUSTER-1",
-      "process_step": "deposition"
+      "tool_group": "LITHO-LINE-1",
+      "process_step": "etch"
     },
     "metrics": {
-      "yield_pct": 83.25,
-      "change_magnitude": -9.61,
-      "metric_variance": 0.885,
-      "measurement_confidence": 0.52,
-      "affected_lot_count": 33,
-      "rework_rate": 3.34,
-      "time_window_hours": 28
+      "yield_pct": 86.77,
+      "change_magnitude": -5.667,
+      "metric_variance": 0.36,
+      "measurement_confidence": 0.66,
+      "affected_lot_count": 570,
+      "rework_rate": 8.09,
+      "time_window_hours": 31
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "high",
       "change_dir": "neg",
       "change_bucket": "medium",
@@ -1153,25 +1153,25 @@
   },
   {
     "case_id": "C-033",
-    "created_at": "2025-10-18T01:01:31.839956+00:00",
+    "created_at": "2025-12-01T13:17:20.034403+00:00",
     "family": "Inconsistent yield across large lot population",
     "title": "Inconsistent yield across large lot population",
     "context": {
-      "site": "Plant-C",
-      "tool_group": "DEP-STACK-1",
-      "process_step": "inspection"
+      "site": "Plant-B",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "metrology"
     },
     "metrics": {
-      "yield_pct": 88.67,
-      "change_magnitude": -8.52,
-      "metric_variance": 0.86,
-      "measurement_confidence": 0.58,
-      "affected_lot_count": 21,
-      "rework_rate": 7.86,
+      "yield_pct": 83.67,
+      "change_magnitude": -9.827,
+      "metric_variance": 0.36,
+      "measurement_confidence": 0.64,
+      "affected_lot_count": 611,
+      "rework_rate": 8.09,
       "time_window_hours": 24
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "high",
       "change_dir": "neg",
       "change_bucket": "medium",
@@ -1189,25 +1189,25 @@
   },
   {
     "case_id": "C-034",
-    "created_at": "2025-10-26T00:31:04.839967+00:00",
+    "created_at": "2026-01-06T15:26:40.034678+00:00",
     "family": "Inconsistent yield across large lot population",
     "title": "Inconsistent yield across large lot population",
     "context": {
-      "site": "Plant-B",
+      "site": "Plant-C",
       "tool_group": "INSPECT-GROUP-1",
-      "process_step": "deposition"
+      "process_step": "metrology"
     },
     "metrics": {
-      "yield_pct": 86.96,
-      "change_magnitude": -6.53,
-      "metric_variance": 0.722,
-      "measurement_confidence": 0.72,
-      "affected_lot_count": 26,
-      "rework_rate": 3.67,
-      "time_window_hours": 19
+      "yield_pct": 84.65,
+      "change_magnitude": -10.099,
+      "metric_variance": 0.505,
+      "measurement_confidence": 0.58,
+      "affected_lot_count": 595,
+      "rework_rate": 8.09,
+      "time_window_hours": 36
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "high",
       "change_dir": "neg",
       "change_bucket": "medium",
@@ -1225,25 +1225,25 @@
   },
   {
     "case_id": "C-035",
-    "created_at": "2025-10-20T13:58:34.839979+00:00",
+    "created_at": "2026-01-04T13:14:05.034940+00:00",
     "family": "Inconsistent yield across large lot population",
     "title": "Inconsistent yield across large lot population",
     "context": {
       "site": "Plant-D",
-      "tool_group": "ETCH-CLUSTER-2",
-      "process_step": "etch"
+      "tool_group": "DEP-STACK-1",
+      "process_step": "inspection"
     },
     "metrics": {
-      "yield_pct": 87.27,
-      "change_magnitude": -6.82,
-      "metric_variance": 0.525,
-      "measurement_confidence": 0.74,
-      "affected_lot_count": 25,
-      "rework_rate": 3.42,
-      "time_window_hours": 25
+      "yield_pct": 86.05,
+      "change_magnitude": -9.089,
+      "metric_variance": 0.36,
+      "measurement_confidence": 0.56,
+      "affected_lot_count": 575,
+      "rework_rate": 8.09,
+      "time_window_hours": 37
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "high",
       "change_dir": "neg",
       "change_bucket": "medium",
@@ -1261,25 +1261,25 @@
   },
   {
     "case_id": "C-036",
-    "created_at": "2025-11-25T19:25:34.839991+00:00",
+    "created_at": "2026-01-06T12:13:01.035211+00:00",
     "family": "High variance obscuring small yield degradation",
     "title": "High variance obscuring small yield degradation",
     "context": {
       "site": "Plant-C",
-      "tool_group": "ETCH-CLUSTER-1",
-      "process_step": "deposition"
+      "tool_group": "ETCH-CLUSTER-2",
+      "process_step": "etch"
     },
     "metrics": {
-      "yield_pct": 90.19,
-      "change_magnitude": -2.09,
-      "metric_variance": 0.727,
-      "measurement_confidence": 0.75,
-      "affected_lot_count": 6,
-      "rework_rate": 1.88,
-      "time_window_hours": 20
+      "yield_pct": 90.7,
+      "change_magnitude": -0.982,
+      "metric_variance": 0.36,
+      "measurement_confidence": 0.58,
+      "affected_lot_count": 4,
+      "rework_rate": 2.09,
+      "time_window_hours": 29
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "high",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -1297,25 +1297,25 @@
   },
   {
     "case_id": "C-037",
-    "created_at": "2025-11-27T00:18:42.840003+00:00",
+    "created_at": "2026-01-14T06:32:02.035482+00:00",
     "family": "High variance obscuring small yield degradation",
     "title": "High variance obscuring small yield degradation",
     "context": {
-      "site": "Plant-C",
+      "site": "Plant-D",
       "tool_group": "ETCH-CLUSTER-1",
       "process_step": "lithography"
     },
     "metrics": {
-      "yield_pct": 91.03,
-      "change_magnitude": -1.45,
-      "metric_variance": 0.785,
-      "measurement_confidence": 0.64,
-      "affected_lot_count": 8,
-      "rework_rate": 0.23,
-      "time_window_hours": 25
+      "yield_pct": 90.23,
+      "change_magnitude": -1.628,
+      "metric_variance": 0.737,
+      "measurement_confidence": 0.58,
+      "affected_lot_count": 6,
+      "rework_rate": 2.09,
+      "time_window_hours": 36
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "high",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -1333,25 +1333,25 @@
   },
   {
     "case_id": "C-038",
-    "created_at": "2026-01-13T13:54:20.840013+00:00",
+    "created_at": "2025-11-20T16:17:36.035751+00:00",
     "family": "High variance obscuring small yield degradation",
     "title": "High variance obscuring small yield degradation",
     "context": {
-      "site": "Plant-D",
-      "tool_group": "ETCH-CLUSTER-1",
-      "process_step": "metrology"
+      "site": "Plant-A",
+      "tool_group": "ETCH-CLUSTER-2",
+      "process_step": "etch"
     },
     "metrics": {
-      "yield_pct": 92.15,
-      "change_magnitude": -2.2,
-      "metric_variance": 0.748,
-      "measurement_confidence": 0.73,
-      "affected_lot_count": 9,
-      "rework_rate": 0.39,
-      "time_window_hours": 40
+      "yield_pct": 90.5,
+      "change_magnitude": -2.842,
+      "metric_variance": 0.993,
+      "measurement_confidence": 0.64,
+      "affected_lot_count": 8,
+      "rework_rate": 2.09,
+      "time_window_hours": 31
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "high",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -1369,25 +1369,25 @@
   },
   {
     "case_id": "C-039",
-    "created_at": "2025-12-29T18:56:35.840024+00:00",
+    "created_at": "2025-12-23T09:39:22.036025+00:00",
     "family": "High variance obscuring small yield degradation",
     "title": "High variance obscuring small yield degradation",
     "context": {
-      "site": "Plant-C",
-      "tool_group": "INSPECT-GROUP-1",
+      "site": "Plant-D",
+      "tool_group": "DEP-STACK-1",
       "process_step": "lithography"
     },
     "metrics": {
-      "yield_pct": 91.45,
-      "change_magnitude": -1.27,
-      "metric_variance": 0.527,
-      "measurement_confidence": 0.63,
-      "affected_lot_count": 7,
-      "rework_rate": 1.39,
-      "time_window_hours": 48
+      "yield_pct": 89.87,
+      "change_magnitude": -2.418,
+      "metric_variance": 0.36,
+      "measurement_confidence": 0.62,
+      "affected_lot_count": 6,
+      "rework_rate": 2.09,
+      "time_window_hours": 28
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "high",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -1405,25 +1405,25 @@
   },
   {
     "case_id": "C-040",
-    "created_at": "2025-11-18T18:16:30.840034+00:00",
+    "created_at": "2025-10-08T15:26:02.036287+00:00",
     "family": "High variance obscuring small yield degradation",
     "title": "High variance obscuring small yield degradation",
     "context": {
       "site": "Plant-D",
-      "tool_group": "INSPECT-GROUP-1",
-      "process_step": "inspection"
+      "tool_group": "LITHO-LINE-2",
+      "process_step": "metrology"
     },
     "metrics": {
-      "yield_pct": 91.3,
-      "change_magnitude": -3.62,
-      "metric_variance": 0.692,
-      "measurement_confidence": 0.6,
-      "affected_lot_count": 8,
-      "rework_rate": 1.67,
-      "time_window_hours": 32
+      "yield_pct": 90.11,
+      "change_magnitude": -1.733,
+      "metric_variance": 0.578,
+      "measurement_confidence": 0.57,
+      "affected_lot_count": 4,
+      "rework_rate": 2.09,
+      "time_window_hours": 36
     },
     "signals": {
-      "yield_bucket": "small",
+      "yield_severity": "small",
       "variance_bucket": "high",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -1441,25 +1441,25 @@
   },
   {
     "case_id": "C-041",
-    "created_at": "2025-12-18T01:56:23.840047+00:00",
+    "created_at": "2026-01-04T22:17:07.036539+00:00",
     "family": "Catastrophic yield drop on specific tool",
     "title": "Catastrophic yield drop on specific tool",
     "context": {
       "site": "Plant-D",
       "tool_group": "DEP-STACK-1",
-      "process_step": "deposition"
+      "process_step": "lithography"
     },
     "metrics": {
-      "yield_pct": 69.58,
-      "change_magnitude": -17.03,
-      "metric_variance": 0.072,
-      "measurement_confidence": 0.85,
-      "affected_lot_count": 2,
-      "rework_rate": 1.59,
-      "time_window_hours": 12
+      "yield_pct": 33.9,
+      "change_magnitude": -48.787,
+      "metric_variance": 0.069,
+      "measurement_confidence": 0.92,
+      "affected_lot_count": 1,
+      "rework_rate": 1.51,
+      "time_window_hours": 6
     },
     "signals": {
-      "yield_bucket": "large",
+      "yield_severity": "large",
       "variance_bucket": "low",
       "change_dir": "neg",
       "change_bucket": "large",
@@ -1477,25 +1477,25 @@
   },
   {
     "case_id": "C-042",
-    "created_at": "2025-12-11T20:33:46.840059+00:00",
+    "created_at": "2026-01-29T12:23:19.036790+00:00",
     "family": "Catastrophic yield drop on specific tool",
     "title": "Catastrophic yield drop on specific tool",
     "context": {
       "site": "Plant-A",
-      "tool_group": "LITHO-LINE-1",
+      "tool_group": "INSPECT-GROUP-1",
       "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 69.85,
-      "change_magnitude": -19.33,
-      "metric_variance": 0.023,
-      "measurement_confidence": 0.99,
+      "yield_pct": 64.92,
+      "change_magnitude": -10.1,
+      "metric_variance": 0.061,
+      "measurement_confidence": 0.94,
       "affected_lot_count": 1,
-      "rework_rate": 1.35,
-      "time_window_hours": 4
+      "rework_rate": 1.14,
+      "time_window_hours": 1
     },
     "signals": {
-      "yield_bucket": "large",
+      "yield_severity": "large",
       "variance_bucket": "low",
       "change_dir": "neg",
       "change_bucket": "large",
@@ -1513,25 +1513,25 @@
   },
   {
     "case_id": "C-043",
-    "created_at": "2025-08-05T11:56:51.840070+00:00",
+    "created_at": "2025-09-23T11:12:41.037051+00:00",
     "family": "Catastrophic yield drop on specific tool",
     "title": "Catastrophic yield drop on specific tool",
     "context": {
       "site": "Plant-A",
-      "tool_group": "ETCH-CLUSTER-1",
-      "process_step": "etch"
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 79.42,
-      "change_magnitude": -19.21,
-      "metric_variance": 0.118,
-      "measurement_confidence": 0.9,
+      "yield_pct": 25.65,
+      "change_magnitude": -52.503,
+      "metric_variance": 0.147,
+      "measurement_confidence": 0.99,
       "affected_lot_count": 3,
-      "rework_rate": 1.15,
-      "time_window_hours": 12
+      "rework_rate": 1.89,
+      "time_window_hours": 3
     },
     "signals": {
-      "yield_bucket": "large",
+      "yield_severity": "large",
       "variance_bucket": "low",
       "change_dir": "neg",
       "change_bucket": "large",
@@ -1549,25 +1549,25 @@
   },
   {
     "case_id": "C-044",
-    "created_at": "2025-12-16T07:04:10.840080+00:00",
+    "created_at": "2025-12-31T09:59:01.037303+00:00",
     "family": "Catastrophic yield drop on specific tool",
     "title": "Catastrophic yield drop on specific tool",
     "context": {
-      "site": "Plant-D",
-      "tool_group": "LITHO-LINE-2",
-      "process_step": "etch"
+      "site": "Plant-C",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "lithography"
     },
     "metrics": {
-      "yield_pct": 54.41,
-      "change_magnitude": -20.35,
-      "metric_variance": 0.135,
-      "measurement_confidence": 0.97,
+      "yield_pct": 41.78,
+      "change_magnitude": -40.381,
+      "metric_variance": 0.09,
+      "measurement_confidence": 0.96,
       "affected_lot_count": 1,
-      "rework_rate": 1.56,
+      "rework_rate": 2.09,
       "time_window_hours": 4
     },
     "signals": {
-      "yield_bucket": "large",
+      "yield_severity": "large",
       "variance_bucket": "low",
       "change_dir": "neg",
       "change_bucket": "large",
@@ -1585,25 +1585,25 @@
   },
   {
     "case_id": "C-045",
-    "created_at": "2025-08-31T14:22:31.840090+00:00",
+    "created_at": "2025-12-06T09:19:08.037573+00:00",
     "family": "Catastrophic yield drop on specific tool",
     "title": "Catastrophic yield drop on specific tool",
     "context": {
-      "site": "Plant-D",
-      "tool_group": "ETCH-CLUSTER-1",
-      "process_step": "deposition"
+      "site": "Plant-A",
+      "tool_group": "LITHO-LINE-1",
+      "process_step": "lithography"
     },
     "metrics": {
-      "yield_pct": 57.45,
-      "change_magnitude": -22.74,
-      "metric_variance": 0.074,
+      "yield_pct": 37.73,
+      "change_magnitude": -48.882,
+      "metric_variance": 0.107,
       "measurement_confidence": 0.96,
-      "affected_lot_count": 3,
-      "rework_rate": 1.06,
-      "time_window_hours": 9
+      "affected_lot_count": 1,
+      "rework_rate": 2.09,
+      "time_window_hours": 4
     },
     "signals": {
-      "yield_bucket": "large",
+      "yield_severity": "large",
       "variance_bucket": "low",
       "change_dir": "neg",
       "change_bucket": "large",
@@ -1621,25 +1621,25 @@
   },
   {
     "case_id": "C-046",
-    "created_at": "2025-11-28T02:42:40.840102+00:00",
+    "created_at": "2026-01-13T08:52:59.037892+00:00",
     "family": "Gradual degradation approaching control limits",
     "title": "Gradual degradation approaching control limits",
     "context": {
-      "site": "Plant-D",
-      "tool_group": "DEP-STACK-1",
-      "process_step": "metrology"
+      "site": "Plant-B",
+      "tool_group": "LITHO-LINE-2",
+      "process_step": "lithography"
     },
     "metrics": {
-      "yield_pct": 83.8,
-      "change_magnitude": -3.64,
-      "metric_variance": 0.245,
-      "measurement_confidence": 0.56,
-      "affected_lot_count": 41,
-      "rework_rate": 0.9,
-      "time_window_hours": 145
+      "yield_pct": 85.6,
+      "change_magnitude": -1.535,
+      "metric_variance": 0.324,
+      "measurement_confidence": 0.6,
+      "affected_lot_count": 651,
+      "rework_rate": 2.09,
+      "time_window_hours": 648
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -1657,25 +1657,25 @@
   },
   {
     "case_id": "C-047",
-    "created_at": "2025-09-14T22:59:38.840112+00:00",
+    "created_at": "2026-01-01T12:39:13.038166+00:00",
     "family": "Gradual degradation approaching control limits",
     "title": "Gradual degradation approaching control limits",
     "context": {
       "site": "Plant-C",
       "tool_group": "DEP-STACK-1",
-      "process_step": "inspection"
+      "process_step": "etch"
     },
     "metrics": {
-      "yield_pct": 85.58,
-      "change_magnitude": -1.17,
-      "metric_variance": 0.175,
-      "measurement_confidence": 0.59,
-      "affected_lot_count": 28,
-      "rework_rate": 0.67,
-      "time_window_hours": 163
+      "yield_pct": 84.06,
+      "change_magnitude": -3.929,
+      "metric_variance": 0.16,
+      "measurement_confidence": 0.56,
+      "affected_lot_count": 643,
+      "rework_rate": 2.09,
+      "time_window_hours": 637
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -1693,25 +1693,25 @@
   },
   {
     "case_id": "C-048",
-    "created_at": "2026-01-15T18:23:49.840124+00:00",
+    "created_at": "2025-10-05T09:47:15.038444+00:00",
     "family": "Gradual degradation approaching control limits",
     "title": "Gradual degradation approaching control limits",
     "context": {
-      "site": "Plant-B",
-      "tool_group": "ETCH-CLUSTER-2",
-      "process_step": "etch"
+      "site": "Plant-A",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 83.41,
-      "change_magnitude": -0.7,
-      "metric_variance": 0.201,
-      "measurement_confidence": 0.63,
-      "affected_lot_count": 32,
-      "rework_rate": 1.09,
-      "time_window_hours": 102
+      "yield_pct": 82.04,
+      "change_magnitude": -1.913,
+      "metric_variance": 0.212,
+      "measurement_confidence": 0.66,
+      "affected_lot_count": 619,
+      "rework_rate": 2.09,
+      "time_window_hours": 628
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -1729,25 +1729,25 @@
   },
   {
     "case_id": "C-049",
-    "created_at": "2025-11-15T11:43:43.840136+00:00",
+    "created_at": "2025-11-11T13:57:25.038698+00:00",
     "family": "Gradual degradation approaching control limits",
     "title": "Gradual degradation approaching control limits",
     "context": {
-      "site": "Plant-D",
-      "tool_group": "LITHO-LINE-2",
-      "process_step": "metrology"
+      "site": "Plant-B",
+      "tool_group": "ETCH-CLUSTER-2",
+      "process_step": "deposition"
     },
     "metrics": {
-      "yield_pct": 88.42,
-      "change_magnitude": -0.18,
-      "metric_variance": 0.327,
-      "measurement_confidence": 0.68,
-      "affected_lot_count": 41,
-      "rework_rate": 0.01,
-      "time_window_hours": 94
+      "yield_pct": 85.31,
+      "change_magnitude": -1.178,
+      "metric_variance": 0.187,
+      "measurement_confidence": 0.76,
+      "affected_lot_count": 596,
+      "rework_rate": 2.09,
+      "time_window_hours": 636
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "small",
@@ -1765,25 +1765,25 @@
   },
   {
     "case_id": "C-050",
-    "created_at": "2025-08-12T11:12:25.840147+00:00",
+    "created_at": "2026-01-15T10:40:30.038963+00:00",
     "family": "Gradual degradation approaching control limits",
     "title": "Gradual degradation approaching control limits",
     "context": {
-      "site": "Plant-D",
+      "site": "Plant-B",
       "tool_group": "DEP-STACK-1",
       "process_step": "metrology"
     },
     "metrics": {
-      "yield_pct": 87.12,
-      "change_magnitude": -3.6,
-      "metric_variance": 0.253,
-      "measurement_confidence": 0.59,
-      "affected_lot_count": 42,
-      "rework_rate": 0.06,
-      "time_window_hours": 92
+      "yield_pct": 81.45,
+      "change_magnitude": -3.52,
+      "metric_variance": 0.299,
+      "measurement_confidence": 0.66,
+      "affected_lot_count": 550,
+      "rework_rate": 2.09,
+      "time_window_hours": 628
     },
     "signals": {
-      "yield_bucket": "medium",
+      "yield_severity": "medium",
       "variance_bucket": "medium",
       "change_dir": "neg",
       "change_bucket": "small",
