@@ -42,4 +42,49 @@ DEFAULTS = {
     "rework_rate": 4.2,
 }
 
+BUCKET_RANGES = {
+    "yield_severity": {
+        # Lower is worse. 
+        "large":  (0.0, 80.0),    # < 80%
+        "medium": (80.0, 89.0),   # 80.0 up to 88.99...
+        "small":  (89.0, 92.5),   # 89.0 up to 92.49...
+        "none":   (92.5, 100.1)   # Baseline (Includes 100.0)
+    },
+    "variance_bucket": {
+        "low":    (0.0, 0.16),
+        "medium": (0.16, 0.36),
+        "high":   (0.36, 1.01)    # >0.9 indicates severe instability
+    },
+    "change_bucket": {
+        "small":  (0.0, 4.1),
+        "medium": (4.1, 10.1),
+        "large":  (10.1, 100.0)
+    },
+    "measurement_bucket": {
+        "low":    (0.0, 0.51),
+        "medium": (0.51, 0.81),
+        "high":   (0.81, 1.01)
+    },
+    "lots_bucket": {
+        # Integers. Logic: 1, 2, 3 -> small. 4..10 -> medium.
+        "small":  (1, 4),         # Starts at 1. 0 is invalid.
+        "medium": (4, 11),
+        "large":  (11, 1000)
+    },
+    "rework_bucket": {
+        "low":    (0.0, 2.1),
+        "medium": (2.1, 8.1),
+        "high":   (8.1, 100.0)
+    },
+    "window_bucket": {
+        # Hours. Starts at 1. 0 is invalid.
+        "short":  (1, 13),        # 1 to 12 hours
+        "medium": (13, 49),       # 13 to 48 hours
+        "long":   (49, 1000)      # 49+ hours
+    }
+}
+
 PERSIST_PATH = "requests_responses.jsonl"
+
+import os
+CASES_PATH = os.path.join(os.path.dirname(__file__), "data", "realistic_cases.json")
