@@ -15,7 +15,7 @@ import numpy as np
 _model = None
 
 MODEL_NAME = "BAAI/bge-small-en-v1.5"
-EMBEDDINGS_DIR = Path(__file__).parent / "data"
+EMBEDDINGS_DIR = Path(__file__).parent.parent.parent / "data"
 EMBEDDINGS_FILE = EMBEDDINGS_DIR / "case_embeddings.npy"
 EMBEDDINGS_HASH_FILE = EMBEDDINGS_DIR / "case_embeddings_hash.txt"
 

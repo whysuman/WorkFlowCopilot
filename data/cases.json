@@ -1,0 +1,1802 @@
+[
+  {
+    "case_id": "C-001",
+    "created_at": "2025-09-02T02:00:30.371122+00:00",
+    "family": "Yield dip coincident with metrology instability",
+    "title": "Yield dip coincident with metrology instability",
+    "context": {
+      "site": "Plant-A",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "inspection"
+    },
+    "metrics": {
+      "yield_pct": 89.86,
+      "change_magnitude": 0.0,
+      "metric_variance": 0.451,
+      "measurement_confidence": 0.05,
+      "affected_lot_count": 9,
+      "rework_rate": 1.87,
+      "time_window_hours": 2
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "high",
+      "change_dir": "zero",
+      "change_bucket": "small",
+      "measurement_bucket": "low",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: variance=high, measurement=low, window=short",
+    "resolution_summary": "Recalibrated measurement path; confirmed yield was stable after validation.",
+    "next_checks_hint": [
+      "measurement_validation",
+      "scope_segmentation"
+    ]
+  },
+  {
+    "case_id": "C-002",
+    "created_at": "2025-09-14T02:05:45.371164+00:00",
+    "family": "Yield dip coincident with metrology instability",
+    "title": "Yield dip coincident with metrology instability",
+    "context": {
+      "site": "Plant-A",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "metrology"
+    },
+    "metrics": {
+      "yield_pct": 89.77,
+      "change_magnitude": 0.0,
+      "metric_variance": 0.688,
+      "measurement_confidence": 0.01,
+      "affected_lot_count": 5,
+      "rework_rate": 1.5,
+      "time_window_hours": 12
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "high",
+      "change_dir": "zero",
+      "change_bucket": "small",
+      "measurement_bucket": "low",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: variance=high, measurement=low, window=short",
+    "resolution_summary": "Recalibrated measurement path; confirmed yield was stable after validation.",
+    "next_checks_hint": [
+      "measurement_validation",
+      "scope_segmentation"
+    ]
+  },
+  {
+    "case_id": "C-003",
+    "created_at": "2025-12-23T09:31:51.371188+00:00",
+    "family": "Yield dip coincident with metrology instability",
+    "title": "Yield dip coincident with metrology instability",
+    "context": {
+      "site": "Plant-B",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "inspection"
+    },
+    "metrics": {
+      "yield_pct": 91.83,
+      "change_magnitude": 0.0,
+      "metric_variance": 0.364,
+      "measurement_confidence": 0.41,
+      "affected_lot_count": 9,
+      "rework_rate": 0.89,
+      "time_window_hours": 5
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "high",
+      "change_dir": "zero",
+      "change_bucket": "small",
+      "measurement_bucket": "low",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: variance=high, measurement=low, window=short",
+    "resolution_summary": "Recalibrated measurement path; confirmed yield was stable after validation.",
+    "next_checks_hint": [
+      "measurement_validation",
+      "scope_segmentation"
+    ]
+  },
+  {
+    "case_id": "C-004",
+    "created_at": "2025-10-05T21:50:48.371210+00:00",
+    "family": "Yield dip coincident with metrology instability",
+    "title": "Yield dip coincident with metrology instability",
+    "context": {
+      "site": "Plant-C",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "metrology"
+    },
+    "metrics": {
+      "yield_pct": 90.33,
+      "change_magnitude": 0.0,
+      "metric_variance": 0.593,
+      "measurement_confidence": 0.18,
+      "affected_lot_count": 6,
+      "rework_rate": 1.69,
+      "time_window_hours": 12
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "high",
+      "change_dir": "zero",
+      "change_bucket": "small",
+      "measurement_bucket": "low",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: variance=high, measurement=low, window=short",
+    "resolution_summary": "Recalibrated measurement path; confirmed yield was stable after validation.",
+    "next_checks_hint": [
+      "measurement_validation",
+      "scope_segmentation"
+    ]
+  },
+  {
+    "case_id": "C-005",
+    "created_at": "2025-08-04T14:50:16.371231+00:00",
+    "family": "Yield dip coincident with metrology instability",
+    "title": "Yield dip coincident with metrology instability",
+    "context": {
+      "site": "Plant-A",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "metrology"
+    },
+    "metrics": {
+      "yield_pct": 90.93,
+      "change_magnitude": 0.0,
+      "metric_variance": 0.899,
+      "measurement_confidence": 0.31,
+      "affected_lot_count": 10,
+      "rework_rate": 0.76,
+      "time_window_hours": 4
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "high",
+      "change_dir": "zero",
+      "change_bucket": "small",
+      "measurement_bucket": "low",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: variance=high, measurement=low, window=short",
+    "resolution_summary": "Recalibrated measurement path; confirmed yield was stable after validation.",
+    "next_checks_hint": [
+      "measurement_validation",
+      "scope_segmentation"
+    ]
+  },
+  {
+    "case_id": "C-006",
+    "created_at": "2025-12-21T03:53:32.371255+00:00",
+    "family": "Etch cluster excursion limited to one tool group",
+    "title": "Etch cluster excursion limited to one tool group",
+    "context": {
+      "site": "Plant-A",
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "etch"
+    },
+    "metrics": {
+      "yield_pct": 88.87,
+      "change_magnitude": -9.23,
+      "metric_variance": 0.333,
+      "measurement_confidence": 0.89,
+      "affected_lot_count": 2,
+      "rework_rate": 5.91,
+      "time_window_hours": 36
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "medium",
+      "measurement_bucket": "high",
+      "lots_bucket": "small",
+      "rework_bucket": "medium",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: context=tool_group, yield=medium, change=neg",
+    "resolution_summary": "Isolated to specific chamber; corrected config drift; monitored recovery.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "recent_changes_review"
+    ]
+  },
+  {
+    "case_id": "C-007",
+    "created_at": "2025-10-05T03:33:17.371278+00:00",
+    "family": "Etch cluster excursion limited to one tool group",
+    "title": "Etch cluster excursion limited to one tool group",
+    "context": {
+      "site": "Plant-C",
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "etch"
+    },
+    "metrics": {
+      "yield_pct": 86.32,
+      "change_magnitude": -8.2,
+      "metric_variance": 0.174,
+      "measurement_confidence": 0.94,
+      "affected_lot_count": 3,
+      "rework_rate": 6.47,
+      "time_window_hours": 23
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "medium",
+      "measurement_bucket": "high",
+      "lots_bucket": "small",
+      "rework_bucket": "medium",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: context=tool_group, yield=medium, change=neg",
+    "resolution_summary": "Isolated to specific chamber; corrected config drift; monitored recovery.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "recent_changes_review"
+    ]
+  },
+  {
+    "case_id": "C-008",
+    "created_at": "2025-12-07T20:43:11.371300+00:00",
+    "family": "Etch cluster excursion limited to one tool group",
+    "title": "Etch cluster excursion limited to one tool group",
+    "context": {
+      "site": "Plant-C",
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "etch"
+    },
+    "metrics": {
+      "yield_pct": 87.58,
+      "change_magnitude": -8.76,
+      "metric_variance": 0.206,
+      "measurement_confidence": 0.82,
+      "affected_lot_count": 2,
+      "rework_rate": 4.51,
+      "time_window_hours": 17
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "medium",
+      "measurement_bucket": "high",
+      "lots_bucket": "small",
+      "rework_bucket": "medium",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: context=tool_group, yield=medium, change=neg",
+    "resolution_summary": "Isolated to specific chamber; corrected config drift; monitored recovery.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "recent_changes_review"
+    ]
+  },
+  {
+    "case_id": "C-009",
+    "created_at": "2025-11-24T20:05:10.371321+00:00",
+    "family": "Etch cluster excursion limited to one tool group",
+    "title": "Etch cluster excursion limited to one tool group",
+    "context": {
+      "site": "Plant-C",
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "etch"
+    },
+    "metrics": {
+      "yield_pct": 83.56,
+      "change_magnitude": -9.59,
+      "metric_variance": 0.252,
+      "measurement_confidence": 0.86,
+      "affected_lot_count": 1,
+      "rework_rate": 6.57,
+      "time_window_hours": 47
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "medium",
+      "measurement_bucket": "high",
+      "lots_bucket": "small",
+      "rework_bucket": "medium",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: context=tool_group, yield=medium, change=neg",
+    "resolution_summary": "Isolated to specific chamber; corrected config drift; monitored recovery.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "recent_changes_review"
+    ]
+  },
+  {
+    "case_id": "C-010",
+    "created_at": "2025-08-24T11:32:43.371342+00:00",
+    "family": "Etch cluster excursion limited to one tool group",
+    "title": "Etch cluster excursion limited to one tool group",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "ETCH-CLUSTER-2",
+      "process_step": "etch"
+    },
+    "metrics": {
+      "yield_pct": 81.97,
+      "change_magnitude": -10.08,
+      "metric_variance": 0.262,
+      "measurement_confidence": 0.83,
+      "affected_lot_count": 1,
+      "rework_rate": 7.27,
+      "time_window_hours": 22
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "medium",
+      "measurement_bucket": "high",
+      "lots_bucket": "small",
+      "rework_bucket": "medium",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: context=tool_group, yield=medium, change=neg",
+    "resolution_summary": "Isolated to specific chamber; corrected config drift; monitored recovery.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "recent_changes_review"
+    ]
+  },
+  {
+    "case_id": "C-011",
+    "created_at": "2025-08-10T13:11:58.371365+00:00",
+    "family": "Slow drift across sites over long window",
+    "title": "Slow drift across sites over long window",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "DEP-STACK-1",
+      "process_step": "lithography"
+    },
+    "metrics": {
+      "yield_pct": 83.46,
+      "change_magnitude": -2.44,
+      "metric_variance": 0.075,
+      "measurement_confidence": 0.59,
+      "affected_lot_count": 577,
+      "rework_rate": 7.26,
+      "time_window_hours": 60
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "low",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "medium",
+      "window_bucket": "long"
+    },
+    "matched_signals_template": "Matched: window=long, lots=large, drift-like change",
+    "resolution_summary": "Segmented by process_step; identified gradual parameter drift; escalated with evidence pack.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-012",
+    "created_at": "2025-12-16T22:53:10.371388+00:00",
+    "family": "Slow drift across sites over long window",
+    "title": "Slow drift across sites over long window",
+    "context": {
+      "site": "Plant-C",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "deposition"
+    },
+    "metrics": {
+      "yield_pct": 81.0,
+      "change_magnitude": -1.78,
+      "metric_variance": 0.073,
+      "measurement_confidence": 0.8,
+      "affected_lot_count": 907,
+      "rework_rate": 6.42,
+      "time_window_hours": 561
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "low",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "medium",
+      "window_bucket": "long"
+    },
+    "matched_signals_template": "Matched: window=long, lots=large, drift-like change",
+    "resolution_summary": "Segmented by process_step; identified gradual parameter drift; escalated with evidence pack.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-013",
+    "created_at": "2025-09-18T17:20:58.371409+00:00",
+    "family": "Slow drift across sites over long window",
+    "title": "Slow drift across sites over long window",
+    "context": {
+      "site": "Plant-A",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "deposition"
+    },
+    "metrics": {
+      "yield_pct": 87.57,
+      "change_magnitude": -2.08,
+      "metric_variance": 0.032,
+      "measurement_confidence": 0.62,
+      "affected_lot_count": 176,
+      "rework_rate": 5.34,
+      "time_window_hours": 846
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "low",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "medium",
+      "window_bucket": "long"
+    },
+    "matched_signals_template": "Matched: window=long, lots=large, drift-like change",
+    "resolution_summary": "Segmented by process_step; identified gradual parameter drift; escalated with evidence pack.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-014",
+    "created_at": "2025-09-08T14:30:10.371432+00:00",
+    "family": "Slow drift across sites over long window",
+    "title": "Slow drift across sites over long window",
+    "context": {
+      "site": "Plant-C",
+      "tool_group": "LITHO-LINE-2",
+      "process_step": "lithography"
+    },
+    "metrics": {
+      "yield_pct": 81.01,
+      "change_magnitude": -1.49,
+      "metric_variance": 0.158,
+      "measurement_confidence": 0.75,
+      "affected_lot_count": 256,
+      "rework_rate": 2.45,
+      "time_window_hours": 948
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "low",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "medium",
+      "window_bucket": "long"
+    },
+    "matched_signals_template": "Matched: window=long, lots=large, drift-like change",
+    "resolution_summary": "Segmented by process_step; identified gradual parameter drift; escalated with evidence pack.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-015",
+    "created_at": "2025-12-20T07:43:11.371453+00:00",
+    "family": "Slow drift across sites over long window",
+    "title": "Slow drift across sites over long window",
+    "context": {
+      "site": "Plant-A",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "inspection"
+    },
+    "metrics": {
+      "yield_pct": 87.34,
+      "change_magnitude": -4.01,
+      "metric_variance": 0.085,
+      "measurement_confidence": 0.55,
+      "affected_lot_count": 686,
+      "rework_rate": 4.95,
+      "time_window_hours": 611
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "low",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "medium",
+      "window_bucket": "long"
+    },
+    "matched_signals_template": "Matched: window=long, lots=large, drift-like change",
+    "resolution_summary": "Segmented by process_step; identified gradual parameter drift; escalated with evidence pack.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-016",
+    "created_at": "2025-09-21T00:55:55.371479+00:00",
+    "family": "Yield shift after recent recipe change",
+    "title": "Yield shift after recent recipe change",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "ETCH-CLUSTER-2",
+      "process_step": "metrology"
+    },
+    "metrics": {
+      "yield_pct": 60.42,
+      "change_magnitude": -30.44,
+      "metric_variance": 0.303,
+      "measurement_confidence": 0.89,
+      "affected_lot_count": 9,
+      "rework_rate": 67.82,
+      "time_window_hours": 8
+    },
+    "signals": {
+      "yield_severity": "large",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "large",
+      "measurement_bucket": "high",
+      "lots_bucket": "medium",
+      "rework_bucket": "high",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: window=short, change=neg large, rework=high",
+    "resolution_summary": "Rolled back change; validated with A/B lots; documented change correlation.",
+    "next_checks_hint": [
+      "recent_changes_review",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-017",
+    "created_at": "2026-01-16T09:02:05.371502+00:00",
+    "family": "Yield shift after recent recipe change",
+    "title": "Yield shift after recent recipe change",
+    "context": {
+      "site": "Plant-A",
+      "tool_group": "ETCH-CLUSTER-2",
+      "process_step": "etch"
+    },
+    "metrics": {
+      "yield_pct": 5.12,
+      "change_magnitude": -11.88,
+      "metric_variance": 0.271,
+      "measurement_confidence": 0.93,
+      "affected_lot_count": 4,
+      "rework_rate": 14.62,
+      "time_window_hours": 11
+    },
+    "signals": {
+      "yield_severity": "large",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "large",
+      "measurement_bucket": "high",
+      "lots_bucket": "medium",
+      "rework_bucket": "high",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: window=short, change=neg large, rework=high",
+    "resolution_summary": "Rolled back change; validated with A/B lots; documented change correlation.",
+    "next_checks_hint": [
+      "recent_changes_review",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-018",
+    "created_at": "2025-09-06T00:09:39.371523+00:00",
+    "family": "Yield shift after recent recipe change",
+    "title": "Yield shift after recent recipe change",
+    "context": {
+      "site": "Plant-A",
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "deposition"
+    },
+    "metrics": {
+      "yield_pct": 5.67,
+      "change_magnitude": -30.15,
+      "metric_variance": 0.294,
+      "measurement_confidence": 0.85,
+      "affected_lot_count": 5,
+      "rework_rate": 74.58,
+      "time_window_hours": 10
+    },
+    "signals": {
+      "yield_severity": "large",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "large",
+      "measurement_bucket": "high",
+      "lots_bucket": "medium",
+      "rework_bucket": "high",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: window=short, change=neg large, rework=high",
+    "resolution_summary": "Rolled back change; validated with A/B lots; documented change correlation.",
+    "next_checks_hint": [
+      "recent_changes_review",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-019",
+    "created_at": "2025-08-11T17:34:43.371544+00:00",
+    "family": "Yield shift after recent recipe change",
+    "title": "Yield shift after recent recipe change",
+    "context": {
+      "site": "Plant-B",
+      "tool_group": "LITHO-LINE-2",
+      "process_step": "inspection"
+    },
+    "metrics": {
+      "yield_pct": 15.23,
+      "change_magnitude": -17.34,
+      "metric_variance": 0.246,
+      "measurement_confidence": 0.89,
+      "affected_lot_count": 7,
+      "rework_rate": 87.49,
+      "time_window_hours": 1
+    },
+    "signals": {
+      "yield_severity": "large",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "large",
+      "measurement_bucket": "high",
+      "lots_bucket": "medium",
+      "rework_bucket": "high",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: window=short, change=neg large, rework=high",
+    "resolution_summary": "Rolled back change; validated with A/B lots; documented change correlation.",
+    "next_checks_hint": [
+      "recent_changes_review",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-020",
+    "created_at": "2025-12-16T07:13:43.371565+00:00",
+    "family": "Yield shift after recent recipe change",
+    "title": "Yield shift after recent recipe change",
+    "context": {
+      "site": "Plant-A",
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "inspection"
+    },
+    "metrics": {
+      "yield_pct": 58.26,
+      "change_magnitude": -35.43,
+      "metric_variance": 0.182,
+      "measurement_confidence": 0.85,
+      "affected_lot_count": 8,
+      "rework_rate": 49.33,
+      "time_window_hours": 7
+    },
+    "signals": {
+      "yield_severity": "large",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "large",
+      "measurement_bucket": "high",
+      "lots_bucket": "medium",
+      "rework_bucket": "high",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: window=short, change=neg large, rework=high",
+    "resolution_summary": "Rolled back change; validated with A/B lots; documented change correlation.",
+    "next_checks_hint": [
+      "recent_changes_review",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-021",
+    "created_at": "2025-12-02T11:18:54.371587+00:00",
+    "family": "Positive yield shift causing false alarms",
+    "title": "Positive yield shift causing false alarms",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "ETCH-CLUSTER-2",
+      "process_step": "lithography"
+    },
+    "metrics": {
+      "yield_pct": 95.87,
+      "change_magnitude": 83.98,
+      "metric_variance": 0.27,
+      "measurement_confidence": 0.53,
+      "affected_lot_count": 8,
+      "rework_rate": 1.75,
+      "time_window_hours": 2
+    },
+    "signals": {
+      "yield_severity": "none",
+      "variance_bucket": "medium",
+      "change_dir": "pos",
+      "change_bucket": "large",
+      "measurement_bucket": "medium",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: change=pos, window=short",
+    "resolution_summary": "Validated new baseline; updated control limits to reflect improved performance.",
+    "next_checks_hint": [
+      "recent_changes_review",
+      "measurement_validation"
+    ]
+  },
+  {
+    "case_id": "C-022",
+    "created_at": "2025-11-19T01:58:08.371608+00:00",
+    "family": "Positive yield shift causing false alarms",
+    "title": "Positive yield shift causing false alarms",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "LITHO-LINE-2",
+      "process_step": "inspection"
+    },
+    "metrics": {
+      "yield_pct": 94.12,
+      "change_magnitude": 43.8,
+      "metric_variance": 0.172,
+      "measurement_confidence": 0.62,
+      "affected_lot_count": 7,
+      "rework_rate": 0.56,
+      "time_window_hours": 8
+    },
+    "signals": {
+      "yield_severity": "none",
+      "variance_bucket": "medium",
+      "change_dir": "pos",
+      "change_bucket": "large",
+      "measurement_bucket": "medium",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: change=pos, window=short",
+    "resolution_summary": "Validated new baseline; updated control limits to reflect improved performance.",
+    "next_checks_hint": [
+      "recent_changes_review",
+      "measurement_validation"
+    ]
+  },
+  {
+    "case_id": "C-023",
+    "created_at": "2025-09-04T00:00:39.371629+00:00",
+    "family": "Positive yield shift causing false alarms",
+    "title": "Positive yield shift causing false alarms",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "ETCH-CLUSTER-2",
+      "process_step": "etch"
+    },
+    "metrics": {
+      "yield_pct": 94.75,
+      "change_magnitude": 92.1,
+      "metric_variance": 0.276,
+      "measurement_confidence": 0.67,
+      "affected_lot_count": 9,
+      "rework_rate": 0.66,
+      "time_window_hours": 1
+    },
+    "signals": {
+      "yield_severity": "none",
+      "variance_bucket": "medium",
+      "change_dir": "pos",
+      "change_bucket": "large",
+      "measurement_bucket": "medium",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: change=pos, window=short",
+    "resolution_summary": "Validated new baseline; updated control limits to reflect improved performance.",
+    "next_checks_hint": [
+      "recent_changes_review",
+      "measurement_validation"
+    ]
+  },
+  {
+    "case_id": "C-024",
+    "created_at": "2025-11-28T20:17:32.371651+00:00",
+    "family": "Positive yield shift causing false alarms",
+    "title": "Positive yield shift causing false alarms",
+    "context": {
+      "site": "Plant-B",
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "metrology"
+    },
+    "metrics": {
+      "yield_pct": 93.11,
+      "change_magnitude": 25.53,
+      "metric_variance": 0.279,
+      "measurement_confidence": 0.71,
+      "affected_lot_count": 5,
+      "rework_rate": 0.85,
+      "time_window_hours": 10
+    },
+    "signals": {
+      "yield_severity": "none",
+      "variance_bucket": "medium",
+      "change_dir": "pos",
+      "change_bucket": "large",
+      "measurement_bucket": "medium",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: change=pos, window=short",
+    "resolution_summary": "Validated new baseline; updated control limits to reflect improved performance.",
+    "next_checks_hint": [
+      "recent_changes_review",
+      "measurement_validation"
+    ]
+  },
+  {
+    "case_id": "C-025",
+    "created_at": "2025-12-01T07:41:58.371671+00:00",
+    "family": "Positive yield shift causing false alarms",
+    "title": "Positive yield shift causing false alarms",
+    "context": {
+      "site": "Plant-A",
+      "tool_group": "DEP-STACK-1",
+      "process_step": "lithography"
+    },
+    "metrics": {
+      "yield_pct": 95.69,
+      "change_magnitude": 60.06,
+      "metric_variance": 0.265,
+      "measurement_confidence": 0.79,
+      "affected_lot_count": 5,
+      "rework_rate": 1.41,
+      "time_window_hours": 6
+    },
+    "signals": {
+      "yield_severity": "none",
+      "variance_bucket": "medium",
+      "change_dir": "pos",
+      "change_bucket": "large",
+      "measurement_bucket": "medium",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: change=pos, window=short",
+    "resolution_summary": "Validated new baseline; updated control limits to reflect improved performance.",
+    "next_checks_hint": [
+      "recent_changes_review",
+      "measurement_validation"
+    ]
+  },
+  {
+    "case_id": "C-026",
+    "created_at": "2026-01-12T21:47:44.371691+00:00",
+    "family": "Yield stable but rework rate exceeding limits",
+    "title": "Yield stable but rework rate exceeding limits",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "LITHO-LINE-1",
+      "process_step": "deposition"
+    },
+    "metrics": {
+      "yield_pct": 90.6,
+      "change_magnitude": 0.0,
+      "metric_variance": 0.149,
+      "measurement_confidence": 1.0,
+      "affected_lot_count": 20,
+      "rework_rate": 50.22,
+      "time_window_hours": 19
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "low",
+      "change_dir": "zero",
+      "change_bucket": "small",
+      "measurement_bucket": "high",
+      "lots_bucket": "large",
+      "rework_bucket": "high",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: rework=high, yield=small",
+    "resolution_summary": "Identified litho overlay alignment issue; forced recalibration.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "maintenance_logs_review"
+    ]
+  },
+  {
+    "case_id": "C-027",
+    "created_at": "2025-10-10T21:35:32.371711+00:00",
+    "family": "Yield stable but rework rate exceeding limits",
+    "title": "Yield stable but rework rate exceeding limits",
+    "context": {
+      "site": "Plant-B",
+      "tool_group": "DEP-STACK-1",
+      "process_step": "deposition"
+    },
+    "metrics": {
+      "yield_pct": 89.46,
+      "change_magnitude": 0.0,
+      "metric_variance": 0.056,
+      "measurement_confidence": 0.82,
+      "affected_lot_count": 261,
+      "rework_rate": 42.06,
+      "time_window_hours": 23
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "low",
+      "change_dir": "zero",
+      "change_bucket": "small",
+      "measurement_bucket": "high",
+      "lots_bucket": "large",
+      "rework_bucket": "high",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: rework=high, yield=small",
+    "resolution_summary": "Identified litho overlay alignment issue; forced recalibration.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "maintenance_logs_review"
+    ]
+  },
+  {
+    "case_id": "C-028",
+    "created_at": "2025-11-25T13:10:03.371732+00:00",
+    "family": "Yield stable but rework rate exceeding limits",
+    "title": "Yield stable but rework rate exceeding limits",
+    "context": {
+      "site": "Plant-C",
+      "tool_group": "DEP-STACK-1",
+      "process_step": "lithography"
+    },
+    "metrics": {
+      "yield_pct": 91.34,
+      "change_magnitude": 0.0,
+      "metric_variance": 0.089,
+      "measurement_confidence": 1.0,
+      "affected_lot_count": 117,
+      "rework_rate": 94.39,
+      "time_window_hours": 21
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "low",
+      "change_dir": "zero",
+      "change_bucket": "small",
+      "measurement_bucket": "high",
+      "lots_bucket": "large",
+      "rework_bucket": "high",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: rework=high, yield=small",
+    "resolution_summary": "Identified litho overlay alignment issue; forced recalibration.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "maintenance_logs_review"
+    ]
+  },
+  {
+    "case_id": "C-029",
+    "created_at": "2025-09-23T23:35:00.371751+00:00",
+    "family": "Yield stable but rework rate exceeding limits",
+    "title": "Yield stable but rework rate exceeding limits",
+    "context": {
+      "site": "Plant-A",
+      "tool_group": "DEP-STACK-1",
+      "process_step": "lithography"
+    },
+    "metrics": {
+      "yield_pct": 89.95,
+      "change_magnitude": 0.0,
+      "metric_variance": 0.097,
+      "measurement_confidence": 0.95,
+      "affected_lot_count": 219,
+      "rework_rate": 71.28,
+      "time_window_hours": 29
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "low",
+      "change_dir": "zero",
+      "change_bucket": "small",
+      "measurement_bucket": "high",
+      "lots_bucket": "large",
+      "rework_bucket": "high",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: rework=high, yield=small",
+    "resolution_summary": "Identified litho overlay alignment issue; forced recalibration.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "maintenance_logs_review"
+    ]
+  },
+  {
+    "case_id": "C-030",
+    "created_at": "2025-12-21T01:17:00.371771+00:00",
+    "family": "Yield stable but rework rate exceeding limits",
+    "title": "Yield stable but rework rate exceeding limits",
+    "context": {
+      "site": "Plant-C",
+      "tool_group": "LITHO-LINE-1",
+      "process_step": "lithography"
+    },
+    "metrics": {
+      "yield_pct": 91.22,
+      "change_magnitude": 0.0,
+      "metric_variance": 0.133,
+      "measurement_confidence": 0.82,
+      "affected_lot_count": 352,
+      "rework_rate": 78.97,
+      "time_window_hours": 29
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "low",
+      "change_dir": "zero",
+      "change_bucket": "small",
+      "measurement_bucket": "high",
+      "lots_bucket": "large",
+      "rework_bucket": "high",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: rework=high, yield=small",
+    "resolution_summary": "Identified litho overlay alignment issue; forced recalibration.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "maintenance_logs_review"
+    ]
+  },
+  {
+    "case_id": "C-031",
+    "created_at": "2025-12-25T01:43:19.371793+00:00",
+    "family": "Inconsistent yield across large lot population",
+    "title": "Inconsistent yield across large lot population",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "DEP-STACK-1",
+      "process_step": "lithography"
+    },
+    "metrics": {
+      "yield_pct": 81.01,
+      "change_magnitude": -9.77,
+      "metric_variance": 0.809,
+      "measurement_confidence": 0.55,
+      "affected_lot_count": 47,
+      "rework_rate": 7.11,
+      "time_window_hours": 48
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "high",
+      "change_dir": "neg",
+      "change_bucket": "medium",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "medium",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: lots=large, variance=high",
+    "resolution_summary": "Correlated spread to raw material batch variance; quarantined specific batch.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "recent_changes_review"
+    ]
+  },
+  {
+    "case_id": "C-032",
+    "created_at": "2025-08-14T13:37:39.371815+00:00",
+    "family": "Inconsistent yield across large lot population",
+    "title": "Inconsistent yield across large lot population",
+    "context": {
+      "site": "Plant-B",
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "deposition"
+    },
+    "metrics": {
+      "yield_pct": 83.28,
+      "change_magnitude": -9.7,
+      "metric_variance": 0.992,
+      "measurement_confidence": 0.52,
+      "affected_lot_count": 377,
+      "rework_rate": 3.36,
+      "time_window_hours": 28
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "high",
+      "change_dir": "neg",
+      "change_bucket": "medium",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "medium",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: lots=large, variance=high",
+    "resolution_summary": "Correlated spread to raw material batch variance; quarantined specific batch.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "recent_changes_review"
+    ]
+  },
+  {
+    "case_id": "C-033",
+    "created_at": "2025-10-18T16:28:04.371839+00:00",
+    "family": "Inconsistent yield across large lot population",
+    "title": "Inconsistent yield across large lot population",
+    "context": {
+      "site": "Plant-C",
+      "tool_group": "DEP-STACK-1",
+      "process_step": "inspection"
+    },
+    "metrics": {
+      "yield_pct": 88.76,
+      "change_magnitude": -8.6,
+      "metric_variance": 0.962,
+      "measurement_confidence": 0.58,
+      "affected_lot_count": 177,
+      "rework_rate": 7.96,
+      "time_window_hours": 24
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "high",
+      "change_dir": "neg",
+      "change_bucket": "medium",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "medium",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: lots=large, variance=high",
+    "resolution_summary": "Correlated spread to raw material batch variance; quarantined specific batch.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "recent_changes_review"
+    ]
+  },
+  {
+    "case_id": "C-034",
+    "created_at": "2025-10-26T15:57:37.371861+00:00",
+    "family": "Inconsistent yield across large lot population",
+    "title": "Inconsistent yield across large lot population",
+    "context": {
+      "site": "Plant-B",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "deposition"
+    },
+    "metrics": {
+      "yield_pct": 87.04,
+      "change_magnitude": -6.57,
+      "metric_variance": 0.795,
+      "measurement_confidence": 0.73,
+      "affected_lot_count": 265,
+      "rework_rate": 3.7,
+      "time_window_hours": 19
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "high",
+      "change_dir": "neg",
+      "change_bucket": "medium",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "medium",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: lots=large, variance=high",
+    "resolution_summary": "Correlated spread to raw material batch variance; quarantined specific batch.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "recent_changes_review"
+    ]
+  },
+  {
+    "case_id": "C-035",
+    "created_at": "2025-10-21T05:25:07.371882+00:00",
+    "family": "Inconsistent yield across large lot population",
+    "title": "Inconsistent yield across large lot population",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "ETCH-CLUSTER-2",
+      "process_step": "etch"
+    },
+    "metrics": {
+      "yield_pct": 87.35,
+      "change_magnitude": -6.86,
+      "metric_variance": 0.558,
+      "measurement_confidence": 0.75,
+      "affected_lot_count": 244,
+      "rework_rate": 3.44,
+      "time_window_hours": 25
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "high",
+      "change_dir": "neg",
+      "change_bucket": "medium",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "medium",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: lots=large, variance=high",
+    "resolution_summary": "Correlated spread to raw material batch variance; quarantined specific batch.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "recent_changes_review"
+    ]
+  },
+  {
+    "case_id": "C-036",
+    "created_at": "2025-11-26T10:52:07.371903+00:00",
+    "family": "High variance obscuring small yield degradation",
+    "title": "High variance obscuring small yield degradation",
+    "context": {
+      "site": "Plant-C",
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "deposition"
+    },
+    "metrics": {
+      "yield_pct": 90.23,
+      "change_magnitude": -2.09,
+      "metric_variance": 0.802,
+      "measurement_confidence": 0.76,
+      "affected_lot_count": 6,
+      "rework_rate": 1.97,
+      "time_window_hours": 20
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "high",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: variance=high, yield=small, window=medium",
+    "resolution_summary": "Improved segmentation granularity; reduced noise with filters; confirmed mild degradation.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "measurement_validation"
+    ]
+  },
+  {
+    "case_id": "C-037",
+    "created_at": "2025-11-27T15:45:15.371924+00:00",
+    "family": "High variance obscuring small yield degradation",
+    "title": "High variance obscuring small yield degradation",
+    "context": {
+      "site": "Plant-C",
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "lithography"
+    },
+    "metrics": {
+      "yield_pct": 91.09,
+      "change_magnitude": -1.42,
+      "metric_variance": 0.871,
+      "measurement_confidence": 0.64,
+      "affected_lot_count": 8,
+      "rework_rate": 0.24,
+      "time_window_hours": 25
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "high",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: variance=high, yield=small, window=medium",
+    "resolution_summary": "Improved segmentation granularity; reduced noise with filters; confirmed mild degradation.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "measurement_validation"
+    ]
+  },
+  {
+    "case_id": "C-038",
+    "created_at": "2026-01-14T05:20:53.371945+00:00",
+    "family": "High variance obscuring small yield degradation",
+    "title": "High variance obscuring small yield degradation",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "metrology"
+    },
+    "metrics": {
+      "yield_pct": 92.24,
+      "change_magnitude": -2.21,
+      "metric_variance": 0.828,
+      "measurement_confidence": 0.73,
+      "affected_lot_count": 9,
+      "rework_rate": 0.41,
+      "time_window_hours": 40
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "high",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: variance=high, yield=small, window=medium",
+    "resolution_summary": "Improved segmentation granularity; reduced noise with filters; confirmed mild degradation.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "measurement_validation"
+    ]
+  },
+  {
+    "case_id": "C-039",
+    "created_at": "2025-12-30T10:23:08.371965+00:00",
+    "family": "High variance obscuring small yield degradation",
+    "title": "High variance obscuring small yield degradation",
+    "context": {
+      "site": "Plant-C",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "lithography"
+    },
+    "metrics": {
+      "yield_pct": 91.52,
+      "change_magnitude": -1.23,
+      "metric_variance": 0.561,
+      "measurement_confidence": 0.63,
+      "affected_lot_count": 7,
+      "rework_rate": 1.46,
+      "time_window_hours": 48
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "high",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: variance=high, yield=small, window=medium",
+    "resolution_summary": "Improved segmentation granularity; reduced noise with filters; confirmed mild degradation.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "measurement_validation"
+    ]
+  },
+  {
+    "case_id": "C-040",
+    "created_at": "2025-11-19T09:43:03.371985+00:00",
+    "family": "High variance obscuring small yield degradation",
+    "title": "High variance obscuring small yield degradation",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "INSPECT-GROUP-1",
+      "process_step": "inspection"
+    },
+    "metrics": {
+      "yield_pct": 91.37,
+      "change_magnitude": -3.7,
+      "metric_variance": 0.76,
+      "measurement_confidence": 0.6,
+      "affected_lot_count": 8,
+      "rework_rate": 1.75,
+      "time_window_hours": 32
+    },
+    "signals": {
+      "yield_severity": "small",
+      "variance_bucket": "high",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "medium",
+      "rework_bucket": "low",
+      "window_bucket": "medium"
+    },
+    "matched_signals_template": "Matched: variance=high, yield=small, window=medium",
+    "resolution_summary": "Improved segmentation granularity; reduced noise with filters; confirmed mild degradation.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "measurement_validation"
+    ]
+  },
+  {
+    "case_id": "C-041",
+    "created_at": "2025-12-18T17:22:56.372005+00:00",
+    "family": "Catastrophic yield drop on specific tool",
+    "title": "Catastrophic yield drop on specific tool",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "DEP-STACK-1",
+      "process_step": "deposition"
+    },
+    "metrics": {
+      "yield_pct": 52.38,
+      "change_magnitude": -27.55,
+      "metric_variance": 0.071,
+      "measurement_confidence": 0.85,
+      "affected_lot_count": 2,
+      "rework_rate": 1.67,
+      "time_window_hours": 12
+    },
+    "signals": {
+      "yield_severity": "large",
+      "variance_bucket": "low",
+      "change_dir": "neg",
+      "change_bucket": "large",
+      "measurement_bucket": "high",
+      "lots_bucket": "small",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: yield=large drop, window=short",
+    "resolution_summary": "Emergency tool down; replaced failed RF generator; qualified tool recovery.",
+    "next_checks_hint": [
+      "maintenance_logs_review",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-042",
+    "created_at": "2025-12-12T12:00:19.372025+00:00",
+    "family": "Catastrophic yield drop on specific tool",
+    "title": "Catastrophic yield drop on specific tool",
+    "context": {
+      "site": "Plant-A",
+      "tool_group": "LITHO-LINE-1",
+      "process_step": "deposition"
+    },
+    "metrics": {
+      "yield_pct": 53.11,
+      "change_magnitude": -32.88,
+      "metric_variance": 0.015,
+      "measurement_confidence": 1.0,
+      "affected_lot_count": 1,
+      "rework_rate": 1.41,
+      "time_window_hours": 4
+    },
+    "signals": {
+      "yield_severity": "large",
+      "variance_bucket": "low",
+      "change_dir": "neg",
+      "change_bucket": "large",
+      "measurement_bucket": "high",
+      "lots_bucket": "small",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: yield=large drop, window=short",
+    "resolution_summary": "Emergency tool down; replaced failed RF generator; qualified tool recovery.",
+    "next_checks_hint": [
+      "maintenance_logs_review",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-043",
+    "created_at": "2025-08-06T03:23:24.372046+00:00",
+    "family": "Catastrophic yield drop on specific tool",
+    "title": "Catastrophic yield drop on specific tool",
+    "context": {
+      "site": "Plant-A",
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "etch"
+    },
+    "metrics": {
+      "yield_pct": 78.71,
+      "change_magnitude": -16.94,
+      "metric_variance": 0.123,
+      "measurement_confidence": 0.9,
+      "affected_lot_count": 3,
+      "rework_rate": 1.21,
+      "time_window_hours": 12
+    },
+    "signals": {
+      "yield_severity": "large",
+      "variance_bucket": "low",
+      "change_dir": "neg",
+      "change_bucket": "large",
+      "measurement_bucket": "high",
+      "lots_bucket": "small",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: yield=large drop, window=short",
+    "resolution_summary": "Emergency tool down; replaced failed RF generator; qualified tool recovery.",
+    "next_checks_hint": [
+      "maintenance_logs_review",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-044",
+    "created_at": "2025-12-16T22:30:43.372067+00:00",
+    "family": "Catastrophic yield drop on specific tool",
+    "title": "Catastrophic yield drop on specific tool",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "LITHO-LINE-2",
+      "process_step": "etch"
+    },
+    "metrics": {
+      "yield_pct": 11.81,
+      "change_magnitude": -63.8,
+      "metric_variance": 0.143,
+      "measurement_confidence": 0.98,
+      "affected_lot_count": 1,
+      "rework_rate": 1.63,
+      "time_window_hours": 4
+    },
+    "signals": {
+      "yield_severity": "large",
+      "variance_bucket": "low",
+      "change_dir": "neg",
+      "change_bucket": "large",
+      "measurement_bucket": "high",
+      "lots_bucket": "small",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: yield=large drop, window=short",
+    "resolution_summary": "Emergency tool down; replaced failed RF generator; qualified tool recovery.",
+    "next_checks_hint": [
+      "maintenance_logs_review",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-045",
+    "created_at": "2025-09-01T05:49:04.372087+00:00",
+    "family": "Catastrophic yield drop on specific tool",
+    "title": "Catastrophic yield drop on specific tool",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "ETCH-CLUSTER-1",
+      "process_step": "deposition"
+    },
+    "metrics": {
+      "yield_pct": 19.94,
+      "change_magnitude": -69.45,
+      "metric_variance": 0.073,
+      "measurement_confidence": 0.97,
+      "affected_lot_count": 3,
+      "rework_rate": 1.11,
+      "time_window_hours": 9
+    },
+    "signals": {
+      "yield_severity": "large",
+      "variance_bucket": "low",
+      "change_dir": "neg",
+      "change_bucket": "large",
+      "measurement_bucket": "high",
+      "lots_bucket": "small",
+      "rework_bucket": "low",
+      "window_bucket": "short"
+    },
+    "matched_signals_template": "Matched: yield=large drop, window=short",
+    "resolution_summary": "Emergency tool down; replaced failed RF generator; qualified tool recovery.",
+    "next_checks_hint": [
+      "maintenance_logs_review",
+      "escalation_packaging"
+    ]
+  },
+  {
+    "case_id": "C-046",
+    "created_at": "2025-11-28T18:09:13.372109+00:00",
+    "family": "Gradual degradation approaching control limits",
+    "title": "Gradual degradation approaching control limits",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "DEP-STACK-1",
+      "process_step": "metrology"
+    },
+    "metrics": {
+      "yield_pct": 83.84,
+      "change_magnitude": -3.72,
+      "metric_variance": 0.249,
+      "measurement_confidence": 0.56,
+      "affected_lot_count": 893,
+      "rework_rate": 1.0,
+      "time_window_hours": 314
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "low",
+      "window_bucket": "long"
+    },
+    "matched_signals_template": "Matched: window=long, change=small neg",
+    "resolution_summary": "Scheduled preventive maintenance (PM) pulled forward; replaced aging consumables.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "maintenance_logs_review"
+    ]
+  },
+  {
+    "case_id": "C-047",
+    "created_at": "2025-09-15T14:26:11.372130+00:00",
+    "family": "Gradual degradation approaching control limits",
+    "title": "Gradual degradation approaching control limits",
+    "context": {
+      "site": "Plant-C",
+      "tool_group": "DEP-STACK-1",
+      "process_step": "inspection"
+    },
+    "metrics": {
+      "yield_pct": 85.64,
+      "change_magnitude": -1.13,
+      "metric_variance": 0.175,
+      "measurement_confidence": 0.6,
+      "affected_lot_count": 289,
+      "rework_rate": 0.7,
+      "time_window_hours": 963
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "low",
+      "window_bucket": "long"
+    },
+    "matched_signals_template": "Matched: window=long, change=small neg",
+    "resolution_summary": "Scheduled preventive maintenance (PM) pulled forward; replaced aging consumables.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "maintenance_logs_review"
+    ]
+  },
+  {
+    "case_id": "C-048",
+    "created_at": "2026-01-16T09:50:22.372150+00:00",
+    "family": "Gradual degradation approaching control limits",
+    "title": "Gradual degradation approaching control limits",
+    "context": {
+      "site": "Plant-B",
+      "tool_group": "ETCH-CLUSTER-2",
+      "process_step": "etch"
+    },
+    "metrics": {
+      "yield_pct": 83.45,
+      "change_magnitude": -0.63,
+      "metric_variance": 0.203,
+      "measurement_confidence": 0.63,
+      "affected_lot_count": 349,
+      "rework_rate": 1.14,
+      "time_window_hours": 474
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "low",
+      "window_bucket": "long"
+    },
+    "matched_signals_template": "Matched: window=long, change=small neg",
+    "resolution_summary": "Scheduled preventive maintenance (PM) pulled forward; replaced aging consumables.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "maintenance_logs_review"
+    ]
+  },
+  {
+    "case_id": "C-049",
+    "created_at": "2025-11-16T03:10:16.372172+00:00",
+    "family": "Gradual degradation approaching control limits",
+    "title": "Gradual degradation approaching control limits",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "LITHO-LINE-2",
+      "process_step": "metrology"
+    },
+    "metrics": {
+      "yield_pct": 88.51,
+      "change_magnitude": -0.08,
+      "metric_variance": 0.336,
+      "measurement_confidence": 0.68,
+      "affected_lot_count": 499,
+      "rework_rate": 0.01,
+      "time_window_hours": 409
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "low",
+      "window_bucket": "long"
+    },
+    "matched_signals_template": "Matched: window=long, change=small neg",
+    "resolution_summary": "Scheduled preventive maintenance (PM) pulled forward; replaced aging consumables.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "maintenance_logs_review"
+    ]
+  },
+  {
+    "case_id": "C-050",
+    "created_at": "2025-08-13T02:38:58.372193+00:00",
+    "family": "Gradual degradation approaching control limits",
+    "title": "Gradual degradation approaching control limits",
+    "context": {
+      "site": "Plant-D",
+      "tool_group": "DEP-STACK-1",
+      "process_step": "metrology"
+    },
+    "metrics": {
+      "yield_pct": 87.2,
+      "change_magnitude": -3.68,
+      "metric_variance": 0.258,
+      "measurement_confidence": 0.59,
+      "affected_lot_count": 508,
+      "rework_rate": 0.06,
+      "time_window_hours": 393
+    },
+    "signals": {
+      "yield_severity": "medium",
+      "variance_bucket": "medium",
+      "change_dir": "neg",
+      "change_bucket": "small",
+      "measurement_bucket": "medium",
+      "lots_bucket": "large",
+      "rework_bucket": "low",
+      "window_bucket": "long"
+    },
+    "matched_signals_template": "Matched: window=long, change=small neg",
+    "resolution_summary": "Scheduled preventive maintenance (PM) pulled forward; replaced aging consumables.",
+    "next_checks_hint": [
+      "scope_segmentation",
+      "maintenance_logs_review"
+    ]
+  }
+]

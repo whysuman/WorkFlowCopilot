@@ -17,7 +17,7 @@ def init_session_state() -> None:
 
 def on_submit_callback(raw_json, mode):
     if mode == "JSON":
-        from app.validation import validate_metrics_json
+        from app.core.validation import validate_metrics_json
         _, err = validate_metrics_json(raw_json)
         st.session_state.last_json_valid_on_submit = (err is None)
     else:

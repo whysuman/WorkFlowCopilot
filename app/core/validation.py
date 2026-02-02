@@ -1,4 +1,4 @@
-from app.schema import METRIC_KEYS
+from app.core.schema import METRIC_KEYS
 import json
 from typing import Any, Dict, Optional, Tuple
 
