@@ -84,7 +84,9 @@ BUCKET_RANGES = {
     }
 }
 
-PERSIST_PATH = "requests_responses.jsonl"
-
 import os
-CASES_PATH = os.path.join(os.path.dirname(__file__), "data", "realistic_cases.json")
+
+_PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+PERSIST_PATH = os.path.join(_PROJECT_ROOT, "output", "requests_responses.jsonl")
+CASES_PATH = os.path.join(_PROJECT_ROOT, "data", "realistic_cases.json")
