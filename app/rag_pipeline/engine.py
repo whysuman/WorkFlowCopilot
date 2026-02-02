@@ -16,16 +16,16 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import streamlit as st
 
-from app.rag import load_cases, build_or_load_embeddings, retrieve_similar_cases
-from app.llm import (
+from app.rag_pipeline.rag import load_cases, build_or_load_embeddings, retrieve_similar_cases
+from app.rag_pipeline.llm import (
     detect_backend,
     generate_llm_response,
     assess_investigation_llm,
     OLLAMA_MODEL,
     HF_MODEL,
 )
-from app.triage import assess_investigation
-from app.placeholder import build_placeholder_response
+from app.rag_pipeline.triage import assess_investigation
+from app.rag_pipeline.placeholder import build_placeholder_response
 from app.config import CASES_PATH
 
 # List[Dict[str, Any]]
