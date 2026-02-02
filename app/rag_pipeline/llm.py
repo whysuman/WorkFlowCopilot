@@ -12,10 +12,19 @@ orchestrator (ai_engine.py) to fall through to the next backend.
 from __future__ import annotations
 
 import json
+import logging
 import os
 from typing import Any, Dict, List, Optional, Tuple
 
-HF_MODEL = "mistralai/Mistral-7B-Instruct-v0.3"
+logger = logging.getLogger(__name__)
+
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+HF_MODEL = "Qwen/Qwen2.5-72B-Instruct:novita"
 OLLAMA_MODEL = "llama3.2:3b"
 OLLAMA_TIMEOUT = 60
 
@@ -25,25 +34,30 @@ OLLAMA_TIMEOUT = 60
 # ---------------------------------------------------------------------------
 
 def _check_huggingface_available() -> bool:
-    """Check if HuggingFace Inference API is available (HF_TOKEN set)."""
+    """Check if HuggingFace Inference API is available (HF_TOKEN set + model responds)."""
     token = os.environ.get("HF_TOKEN", "").strip()
     if not token:
         return False
     try:
         from huggingface_hub import InferenceClient
-        client = InferenceClient(token=token)
-        client.text_generation("test", model=HF_MODEL, max_new_tokens=1)
+        client = InferenceClient(api_key=token)
+        client.chat.completions.create(
+            model=HF_MODEL,
+            messages=[{"role": "user", "content": "ping"}],
+            max_tokens=1,
+        )
         return True
     except Exception:
         return False
 
 
 def _check_ollama_available() -> bool:
-    """Ping Ollama server to check availability."""
+    """Check if Ollama server is running AND the required model is pulled."""
     try:
         import ollama
-        ollama.list()
-        return True
+        models_resp = ollama.list()
+        model_names = [m.get("name", "") for m in getattr(models_resp, "models", [])]
+        return any(OLLAMA_MODEL in name for name in model_names)
     except Exception:
         return False
 
@@ -187,20 +201,21 @@ def _call_huggingface(system_prompt: str, user_prompt: str) -> Optional[str]:
     try:
         from huggingface_hub import InferenceClient
         token = os.environ.get("HF_TOKEN", "")
-        client = InferenceClient(token=token,timeout=120)#Decrease timeout in production
+        client = InferenceClient(api_key=token)
 
         messages = [
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ]
-        response = client.chat_completion(
+        response = client.chat.completions.create(
             model=HF_MODEL,
             messages=messages,
             max_tokens=1024,
             temperature=0.3,
         )
         return response.choices[0].message.content
-    except Exception:
+    except Exception as e:
+        logger.warning("HuggingFace call failed: %s", e)
         return None
 
 
@@ -221,7 +236,8 @@ def _call_ollama(system_prompt: str, user_prompt: str) -> Optional[str]:
             options={"temperature": 0.3, "num_predict": 1024},
         )
         return response["message"]["content"]
-    except Exception:
+    except Exception as e:
+        logger.warning("Ollama call failed: %s", e)
         return None
 
 
