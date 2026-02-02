@@ -1,57 +1,14 @@
-# from fastapi import FastAPI 
-# from pydantic import BaseModel, Field
-# from typing import Dict,Any,Optional
-# app = FastAPI(title = "KLA Workflow Copilot", version="1.0")
-
-
-# class TriageRequest(BaseModel):
-#     error_code: Optional[str] = Field(default=None, description="Optional error code from the system")
-#     symptoms: str
-#     log_snippet: Optional[str] = Field(default=None)
-#     context: Optional[Dict[str,Any]] = Field(default=None)
-
-
-# @app.get("/")
-# def health_check():
-#     return {"status": "ok"}
-
-
-# @app.post("/triage")
-# def triage(req: TriageRequest):
-#     # Keep your existing static content
-#     response = {
-#         "next_checks": [
-#             {"step": "Inspect seals", "reason": "Pressure instability often relates to leaks"},
-#             {"step": "Check pump temperature/current", "reason": "Pump health issues can slow pumpdown"},
-#         ],
-#         "confidence": "medium",
-#         "followup_questions": [
-#             "When did the issue start?",
-#             "Was there any recent maintenance?",
-#         ],
-#         "similar_incidents": [],
-#     }
-
-#     # Add decision-support retrieval
-#     # if incident_store is not None:
-#     #     query = f"error_code: {req.error_code or ''} | symptoms: {req.symptoms} | logs: {req.log_snippet or ''}"
-#     #     response["similar_incidents"] = incident_store.search(query, top_k=3)
-
-#     return response
-
-
-# main.py
 import streamlit as st
 import datetime as dt
 import json
 
-from app.state import init_session_state
-from app.ui import build_intake_form
-from app.validation import validate_metrics_json
-from app.payload import build_payload
-from app.placeholder import build_placeholder_response
-from app.persistence import append_jsonl
-from app.output_render import render_outputs
+from app.ui.state import init_session_state
+from app.ui.intake_form import build_intake_form
+from app.ui.output_render import render_outputs
+from app.core.validation import validate_metrics_json
+from app.core.payload import build_payload
+from app.core.persistence import append_jsonl
+from app.rag_pipeline.engine import build_ai_response
 
 from app.config import PERSIST_PATH, DEFAULTS
 
@@ -76,8 +33,6 @@ def main() -> None:
 
         # --- Submit handler (the ONLY place JSON validation happens) ---
         if submit:
-            st.write("DEBUG inputs['mode']:", inputs["mode"])
-            st.write("DEBUG session mode:", st.session_state.get("mode"))
             st.session_state.json_validation_error = None
 
             mode = inputs["mode"]
@@ -88,10 +43,8 @@ def main() -> None:
                 parsed, err = validate_metrics_json(metrics_json_raw)
                 st.session_state.last_json_valid_on_submit = (err is None)
                 if err:
-                    # Block API call / response update``
                     st.session_state.json_validation_error = err
                 else:
-                    st.write(f"Last json valid on submit value {st.session_state.last_json_valid_on_submit}")
                     payload = build_payload(
                         site=inputs["site"],
                         tool_group=inputs["tool_group"],
@@ -105,7 +58,7 @@ def main() -> None:
                     )
                     st.session_state.last_request = payload
                     st.session_state.last_json_valid_on_submit = True
-                    st.session_state.last_response = build_placeholder_response(payload)
+                    st.session_state.last_response = build_ai_response(payload)
 
                     append_jsonl(
                         PERSIST_PATH,
@@ -130,7 +83,7 @@ def main() -> None:
                     json_metrics=None,
                 )
                 st.session_state.last_request = payload
-                st.session_state.last_response = build_placeholder_response(payload)
+                st.session_state.last_response = build_ai_response(payload)
 
                 append_jsonl(
                     PERSIST_PATH,
