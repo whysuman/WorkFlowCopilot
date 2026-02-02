@@ -98,6 +98,13 @@ def main() -> None:
     with right:
         render_outputs(st.session_state.last_response)
 
+        # Show LLM backend status
+        if st.session_state.last_response:
+            meta = st.session_state.last_response.get("meta", {})
+            llm_note = meta.get("llm_note")
+            if llm_note:
+                st.info(llm_note)
+
     with st.expander("Debug (optional)", expanded=False):
         st.write("mode:", st.session_state.mode)
         st.write("readiness_pct:", st.session_state.readiness_pct)

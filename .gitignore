@@ -4,6 +4,12 @@ __pycache__/
 .python-version
 CLAUDE.md
 .env
-app/data/case_embeddings.npy
-app/data/case_embeddings_hash.txt
 STRATEGY_REPORT_KLA.txt
+
+# Cached embeddings
+data/case_embeddings.npy
+data/case_embeddings_hash.txt
+
+# Runtime output
+output/
+.claude
