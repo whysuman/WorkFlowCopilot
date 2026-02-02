@@ -8,8 +8,8 @@ from scipy import stats
 from scipy.stats import beta, lognorm, poisson
 
 # --- 0. PATH SETUP & CONFIG LOADING ---
-ROOT = os.path.dirname(os.path.abspath(__file__))
-OUTPUT_PATH = os.path.join(ROOT, "app", "data", "realistic_cases.json")
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+OUTPUT_PATH = os.path.join(ROOT, "data", "realistic_cases.json")
 
 sys.path.append(ROOT)
 
