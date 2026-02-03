@@ -38,33 +38,34 @@ def step1_verify_data():
     return True
 
 
-def step2_rag_load_and_embed():
-    """Step 2: RAG - load cases, build embeddings."""
+def step2_rag_load_and_collection():
+    """Step 2: RAG - load cases, build/load ChromaDB collection."""
     print()
     print("=" * 60)
-    print("STEP 2: RAG pipeline - load cases & build embeddings")
+    print("STEP 2: RAG pipeline - load cases & build ChromaDB collection")
     print("  (First run downloads BAAI/bge-small-en-v1.5 ~130MB)")
     print("=" * 60)
     try:
-        from app.rag_pipeline.rag import load_cases, build_or_load_embeddings
+        from app.rag_pipeline.rag import load_cases, build_or_load_collection
         from app.config import CASES_PATH
 
         cases = load_cases(CASES_PATH)
         print(f"  Loaded {len(cases)} cases from config path")
 
         t0 = time.time()
-        embeddings = build_or_load_embeddings(cases, CASES_PATH)
+        collection = build_or_load_collection(cases, CASES_PATH)
         elapsed = time.time() - t0
-        print(f"  Embeddings shape: {embeddings.shape}")
-        print(f"  Embedding time:   {elapsed:.1f}s (cached after first run)")
+        print(f"  Collection count: {collection.count()}")
+        print(f"  Collection time:  {elapsed:.1f}s (cached after first run)")
         print("  PASS")
-        return cases, embeddings
+        return cases, collection
     except Exception as e:
         print(f"  FAIL: {type(e).__name__}: {e}")
+        import traceback; traceback.print_exc()
         return None, None
 
 
-def step3_rag_retrieve(cases, embeddings):
+def step3_rag_retrieve(cases, collection):
     """Step 3: RAG - retrieve similar cases for a sample query."""
     print()
     print("=" * 60)
@@ -89,14 +90,29 @@ def step3_rag_retrieve(cases, embeddings):
             },
         }
 
-        results = retrieve_similar_cases(sample_payload, cases, embeddings, top_k=3)
+        # Unfiltered retrieval
+        print("  --- Unfiltered retrieval ---")
+        results = retrieve_similar_cases(sample_payload, cases, collection, top_k=3)
         print(f"  Retrieved {len(results)} similar cases:")
         for i, (case, score) in enumerate(results, 1):
             print(f"    {i}. {case.get('case_id')} (family={case.get('family')}) score={score:.3f}")
+
+        # Filtered retrieval (by process_step)
+        print("  --- Filtered retrieval (process_step=etch) ---")
+        filtered_results = retrieve_similar_cases(
+            sample_payload, cases, collection, top_k=3,
+            filters={"process_step": "etch"},
+        )
+        print(f"  Retrieved {len(filtered_results)} filtered cases:")
+        for i, (case, score) in enumerate(filtered_results, 1):
+            ctx = case.get("context", {})
+            print(f"    {i}. {case.get('case_id')} (process_step={ctx.get('process_step')}) score={score:.3f}")
+
         print("  PASS")
         return True
     except Exception as e:
         print(f"  FAIL: {type(e).__name__}: {e}")
+        import traceback; traceback.print_exc()
         return False
 
 
@@ -122,7 +138,7 @@ def step4_backend_detection():
         return None
 
 
-def step5_investigation_assessment(cases, embeddings):
+def step5_investigation_assessment(cases, collection):
     """Step 5: Test rule-based investigation assessment."""
     print()
     print("=" * 60)
@@ -147,8 +163,8 @@ def step5_investigation_assessment(cases, embeddings):
         # Build similar cases list like ai_engine does (list of tuples)
         from app.rag_pipeline.rag import retrieve_similar_cases
         similar = []
-        if cases is not None and embeddings is not None:
-            similar = retrieve_similar_cases(sample_payload, cases, embeddings, top_k=3)
+        if cases is not None and collection is not None:
+            similar = retrieve_similar_cases(sample_payload, cases, collection, top_k=3)
 
         assessment = assess_investigation(sample_payload, similar)
         print(f"  Pattern:    {assessment.get('pattern')}")
@@ -249,20 +265,20 @@ if __name__ == "__main__":
             sys.exit(1)
 
     if step in ("2", "all"):
-        cases, embeddings = step2_rag_load_and_embed()
+        cases, collection = step2_rag_load_and_collection()
 
     if step in ("3", "all"):
         if step == "3":
-            cases, embeddings = step2_rag_load_and_embed()
-        step3_rag_retrieve(cases, embeddings)
+            cases, collection = step2_rag_load_and_collection()
+        step3_rag_retrieve(cases, collection)
 
     if step in ("4", "all"):
         step4_backend_detection()
 
     if step in ("5", "all"):
         if step == "5":
-            cases, embeddings = step2_rag_load_and_embed()
-        step5_investigation_assessment(cases, embeddings)
+            cases, collection = step2_rag_load_and_collection()
+        step5_investigation_assessment(cases, collection)
 
     if step in ("6", "all"):
         step6_full_pipeline()
