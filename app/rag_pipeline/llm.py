@@ -84,10 +84,12 @@ _INVESTIGATION_SYSTEM_PROMPT = (
     "You must NEVER invent checks or data not grounded in the provided context. "
     "Your role is to synthesize the current investigation signals with similar "
     "historical cases to help the engineer decide what to check next.\n\n"
+    "IMPORTANT: Explain everything in clear, non-technical language that a "
+    "non-specialist could understand. Avoid jargon — use plain English.\n\n"
     "Respond in this exact JSON format:\n"
     "{\n"
     '  "narrative": "A 3-5 sentence synthesis of what the signals suggest, '
-    'referencing similar cases.",\n'
+    'referencing similar cases. Use plain language.",\n'
     '  "next_checks": [\n'
     '    {"category": "...", "check": "...", "why": "..."},\n'
     '    {"category": "...", "check": "...", "why": "..."}\n'
@@ -103,15 +105,17 @@ _ASSESSMENT_SYSTEM_PROMPT = (
     "You help engineers understand what type of problem they are dealing with "
     "and what diagnostic approach to take. Base your assessment on the investigation "
     "details and similar historical cases.\n\n"
+    "Use plain, non-technical language in your reasoning and approach.\n\n"
     "Respond in this exact JSON format:\n"
     "{\n"
-    '  "pattern": "The diagnostic pattern (e.g. Measurement Anomaly, Equipment Excursion, '
-    "Process Drift, Recipe/Config Change Impact, Material Variance, Critical Equipment Failure, "
-    'Gradual Degradation, Signal-to-Noise Problem, False Alarm, or Unknown)",\n'
+    '  "pattern": "The diagnostic pattern (e.g. Measurement Problem, Machine-Specific Issue, '
+    "Gradual Drift, Configuration Change Impact, False Alarm, Hidden Quality Issue, "
+    "Batch-to-Batch Variation, Signal-to-Noise Problem, Critical Machine Failure, "
+    'Wear and Degradation, or Unknown)",\n'
     '  "priority": "one of: Critical, High, Medium, Low",\n'
     '  "confidence": "one of: High, Medium, Low — based on how much data is available",\n'
-    '  "diagnostic_approach": "1-2 sentences: what the engineer should check first and why.",\n'
-    '  "reasoning": "One sentence explaining the assessment."\n'
+    '  "diagnostic_approach": "1-2 sentences in plain English: what the engineer should check first and why.",\n'
+    '  "reasoning": "One sentence explaining the assessment in plain language."\n'
     "}\n\n"
     "IMPORTANT: Return ONLY valid JSON."
 )
@@ -126,11 +130,11 @@ def _format_investigation_context(
 
     investigation = (
         "## Current Investigation\n"
-        f"- Site: {payload.get('site', 'unknown')}\n"
-        f"- Tool Group: {payload.get('tool_group', 'unknown')}\n"
-        f"- Process Step: {payload.get('process_step', 'unknown')}\n"
+        f"- Facility: {payload.get('site', 'unknown')}\n"
+        f"- Machine Group: {payload.get('tool_group', 'unknown')}\n"
+        f"- Manufacturing Step: {payload.get('process_step', 'unknown')}\n"
         f"- Severity: {payload.get('severity', 'unknown')}\n"
-        f"- Anomaly Summary: {payload.get('anomaly_summary', 'Not provided')}\n"
+        f"- Issue Description: {payload.get('anomaly_summary', 'Not provided')}\n"
         f"- Metrics: {json.dumps({k: v for k, v in metrics.items() if v is not None}, indent=2)}\n"
     )
 
@@ -158,9 +162,9 @@ def _format_triage_context(
     metrics = payload.get("metrics", {})
 
     context = (
-        f"Site: {payload.get('site')}, Tool: {payload.get('tool_group')}, "
-        f"Step: {payload.get('process_step')}, Severity: {payload.get('severity')}\n"
-        f"Summary: {payload.get('anomaly_summary', 'Not provided')}\n"
+        f"Facility: {payload.get('site')}, Machine Group: {payload.get('tool_group')}, "
+        f"Manufacturing Step: {payload.get('process_step')}, Severity: {payload.get('severity')}\n"
+        f"Issue Description: {payload.get('anomaly_summary', 'Not provided')}\n"
         f"Metrics: {json.dumps({k: v for k, v in metrics.items() if v is not None})}\n"
     )
 
