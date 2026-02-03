@@ -91,3 +91,14 @@ _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PERSIST_PATH = os.path.join(_PROJECT_ROOT, "output", "requests_responses.jsonl")
 CASES_PATH = os.path.join(_PROJECT_ROOT, "data", "realistic_cases.json")
 CHROMA_PERSIST_DIR = os.path.join(_PROJECT_ROOT, "data", "chroma_db")
+
+# --- LLM Configuration ---
+HF_MODEL = "Qwen/Qwen2.5-72B-Instruct:novita"
+OLLAMA_MODEL = "llama3.2:3b"
+LLM_MAX_TOKENS = 1024
+LLM_TEMPERATURE = 0.3
+LLM_TIMEOUT = 60
+LLM_MAX_RETRIES = 3
+LLM_RETRY_WAIT_MIN = 1       
+LLM_RETRY_WAIT_MAX = 10      # seconds
+MIN_SIMILARITY_SCORE = 0.50  # filter out weak RAG matches
