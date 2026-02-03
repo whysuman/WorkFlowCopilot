@@ -15,7 +15,7 @@ sys.path.append(ROOT)
 
 try:
     from app.config import SITES, TOOL_GROUPS, PROCESS_STEPS, BUCKET_RANGES
-    from app.schema import METRIC_KEYS
+    from app.core.schema import METRIC_KEYS
 except ImportError:
     print(" Error: Could not import config from app.config")
     sys.exit(1)
@@ -413,7 +413,7 @@ def filter_steps(keyword):
 
 FAMILIES = [
     {
-        "title": "Yield dip coincident with metrology instability",
+        "title": "Quality drop caused by unreliable measurements",
         "constraints": {
             "process_step": filter_steps("metrology") + filter_steps("inspection"),
             "tool_group": filter_tools("INSPECT"),
@@ -428,12 +428,12 @@ FAMILIES = [
             "rework_bucket": "low",
             "window_bucket": "short",
         },
-        "matched_template": "Matched: variance=high, measurement=low, window=short",
-        "resolution": "Recalibrated measurement path; confirmed yield was stable after validation.",
-        "hints": ["measurement_validation", "scope_segmentation"],
+        "matched_template": "Pattern: unstable measurements + low data confidence + recent onset",
+        "resolution": "Recalibrated the measurement equipment. Confirmed quality was actually stable — the measurements were the problem, not the product.",
+        "hints": ["verify_measurements", "narrow_scope"],
     },
     {
-        "title": "Etch cluster excursion limited to one tool group",
+        "title": "Single machine group producing defects",
         "constraints": {
             "process_step": filter_steps("etch"),
             "tool_group": filter_tools("ETCH"),
@@ -448,12 +448,12 @@ FAMILIES = [
             "rework_bucket": "medium",
             "window_bucket": "medium",
         },
-        "matched_template": "Matched: context=tool_group, yield=medium, change=neg",
-        "resolution": "Isolated to specific chamber; corrected config drift; monitored recovery.",
-        "hints": ["scope_segmentation", "recent_changes_review"],
+        "matched_template": "Pattern: issue limited to one machine group + moderate quality decline",
+        "resolution": "Narrowed the problem to one specific machine chamber. Fixed a configuration that had drifted from spec. Monitored until quality recovered.",
+        "hints": ["narrow_scope", "check_recent_changes"],
     },
     {
-        "title": "Slow drift across sites over long window",
+        "title": "Gradual quality decline across multiple facilities",
         "constraints": {},
         "signals": {
             "yield_severity": "medium",
@@ -465,12 +465,12 @@ FAMILIES = [
             "rework_bucket": "medium",
             "window_bucket": "long",
         },
-        "matched_template": "Matched: window=long, lots=large, drift-like change",
-        "resolution": "Segmented by process_step; identified gradual parameter drift; escalated with evidence pack.",
-        "hints": ["scope_segmentation", "escalation_packaging"],
+        "matched_template": "Pattern: long time window + many batches affected + slow decline",
+        "resolution": "Broke down the data by manufacturing step and found a gradual parameter drift. Packaged the evidence and escalated to the engineering team.",
+        "hints": ["narrow_scope", "prepare_escalation"],
     },
     {
-        "title": "Yield shift after recent recipe change",
+        "title": "Quality drop after process configuration change",
         "constraints": {},
         "signals": {
             "yield_severity": "large",
@@ -482,12 +482,12 @@ FAMILIES = [
             "rework_bucket": "high",
             "window_bucket": "short",
         },
-        "matched_template": "Matched: window=short, change=neg large, rework=high",
-        "resolution": "Rolled back change; validated with A/B lots; documented change correlation.",
-        "hints": ["recent_changes_review", "escalation_packaging"],
+        "matched_template": "Pattern: sudden onset + large quality drop + high rework rate",
+        "resolution": "Rolled back the configuration change. Ran comparison tests between old and new settings to confirm the change caused the problem. Documented the correlation.",
+        "hints": ["check_recent_changes", "prepare_escalation"],
     },
     {
-        "title": "Positive yield shift causing false alarms",
+        "title": "Unexpected quality improvement (false alarm)",
         "constraints": {},
         "signals": {
             "yield_severity": "none",
@@ -499,12 +499,12 @@ FAMILIES = [
             "rework_bucket": "low",
             "window_bucket": "short",
         },
-        "matched_template": "Matched: change=pos, window=short",
-        "resolution": "Validated new baseline; updated control limits to reflect improved performance.",
-        "hints": ["recent_changes_review", "measurement_validation"],
+        "matched_template": "Pattern: positive shift + sudden onset + no quality issues",
+        "resolution": "Confirmed the improvement was real, not a measurement error. Updated the quality thresholds to reflect the new, better baseline.",
+        "hints": ["check_recent_changes", "verify_measurements"],
     },
     {
-        "title": "Yield stable but rework rate exceeding limits",
+        "title": "Products pass but need too many fixes",
         "constraints": {
             "process_step": filter_steps("litho") + filter_steps("dep"),
             "tool_group": filter_tools("LITHO") + filter_tools("DEP"),
@@ -519,12 +519,12 @@ FAMILIES = [
             "rework_bucket": "high",
             "window_bucket": "medium",
         },
-        "matched_template": "Matched: rework=high, yield=small",
-        "resolution": "Identified litho overlay alignment issue; forced recalibration.",
-        "hints": ["scope_segmentation", "maintenance_logs_review"],
+        "matched_template": "Pattern: quality looks OK but rework rate is too high",
+        "resolution": "Found a machine alignment issue that was causing products to need extra fixing. Forced a recalibration of the affected machine.",
+        "hints": ["narrow_scope", "check_maintenance_logs"],
     },
     {
-        "title": "Inconsistent yield across large lot population",
+        "title": "Inconsistent quality across many production batches",
         "constraints": {},
         "signals": {
             "yield_severity": "medium",
@@ -536,12 +536,12 @@ FAMILIES = [
             "rework_bucket": "medium",
             "window_bucket": "medium",
         },
-        "matched_template": "Matched: lots=large, variance=high",
-        "resolution": "Correlated spread to raw material batch variance; quarantined specific batch.",
-        "hints": ["scope_segmentation", "recent_changes_review"],
+        "matched_template": "Pattern: many batches affected + high variability between batches",
+        "resolution": "Traced the inconsistency to a bad batch of raw materials. Quarantined the affected material and quality stabilized.",
+        "hints": ["narrow_scope", "check_recent_changes"],
     },
     {
-        "title": "High variance obscuring small yield degradation",
+        "title": "Noisy data hiding a real quality decline",
         "constraints": {},
         "signals": {
             "yield_severity": "small",
@@ -553,12 +553,12 @@ FAMILIES = [
             "rework_bucket": "low",
             "window_bucket": "medium",
         },
-        "matched_template": "Matched: variance=high, yield=small, window=medium",
-        "resolution": "Improved segmentation granularity; reduced noise with filters; confirmed mild degradation.",
-        "hints": ["scope_segmentation", "measurement_validation"],
+        "matched_template": "Pattern: high measurement noise + small but real quality drop",
+        "resolution": "Filtered out the noise by analyzing more granular data. Confirmed a mild but real quality degradation that was being masked by noisy measurements.",
+        "hints": ["narrow_scope", "verify_measurements"],
     },
     {
-        "title": "Catastrophic yield drop on specific tool",
+        "title": "Sudden machine failure causing massive quality drop",
         "constraints": {
             "process_step": filter_steps("etch") + filter_steps("litho") + filter_steps("dep"),
         },
@@ -572,12 +572,12 @@ FAMILIES = [
             "rework_bucket": "low",
             "window_bucket": "short",
         },
-        "matched_template": "Matched: yield=large drop, window=short",
-        "resolution": "Emergency tool down; replaced failed RF generator; qualified tool recovery.",
-        "hints": ["maintenance_logs_review", "escalation_packaging"],
+        "matched_template": "Pattern: sudden large quality drop + few batches + very recent",
+        "resolution": "Emergency shutdown of the machine. Replaced a failed hardware component. Ran qualification tests to confirm the machine was working again.",
+        "hints": ["check_maintenance_logs", "prepare_escalation"],
     },
     {
-        "title": "Gradual degradation approaching control limits",
+        "title": "Slow wear approaching maintenance threshold",
         "constraints": {},
         "signals": {
             "yield_severity": "medium",
@@ -589,9 +589,9 @@ FAMILIES = [
             "rework_bucket": "low",
             "window_bucket": "long",
         },
-        "matched_template": "Matched: window=long, change=small neg",
-        "resolution": "Scheduled preventive maintenance (PM) pulled forward; replaced aging consumables.",
-        "hints": ["scope_segmentation", "maintenance_logs_review"],
+        "matched_template": "Pattern: long time window + small gradual decline + many batches",
+        "resolution": "Pulled forward a scheduled maintenance. Replaced aging consumable parts that were slowly wearing out. Quality returned to normal.",
+        "hints": ["narrow_scope", "check_maintenance_logs"],
     },
 ]
 
