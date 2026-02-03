@@ -24,8 +24,8 @@ def build_placeholder_response(payload: Dict[str, Any]) -> Dict[str, Any]:
         similar_cases = [
             {
                 "similarity": "Low",
-                "matched_signals": "Sparse metrics; anomaly described but core signals missing.",
-                "resolution": "Start with segmentation + measurement validation; escalate if scope expands.",
+                "matched_signals": "Limited data provided. The issue is described but key measurements are missing.",
+                "resolution": "Start by narrowing the scope and verifying measurements. Escalate if the problem grows.",
             }
         ]
     else:
@@ -33,69 +33,69 @@ def build_placeholder_response(payload: Dict[str, Any]) -> Dict[str, Any]:
         similar_cases = [
             {
                 "similarity": "High" if severity == "high" else "Medium",
-                "matched_signals": f"Yield shift observed; severity='{severity}'.",
-                "resolution": "Validated measurement path; segmented by tool_group; reviewed recent changes.",
+                "matched_signals": f"Quality change detected; rated as {severity} severity.",
+                "resolution": "Verified measurement accuracy. Narrowed down by machine group. Reviewed recent changes.",
             },
             {
                 "similarity": "Medium",
-                "matched_signals": "Temporal clustering within the provided time window.",
-                "resolution": "Scoped impacted lots; isolated to process_step segment; documented escalation pack.",
+                "matched_signals": "Timing pattern matches — events clustered within the reported time window.",
+                "resolution": "Identified affected batches. Isolated to specific manufacturing step. Prepared escalation package.",
             },
         ]
         if severity == "high":
             similar_cases.append(
                 {
                     "similarity": "Medium",
-                    "matched_signals": "High operational impact signal; potential drift vs shift ambiguity.",
-                    "resolution": "Ran measurement cross-check; compared recent recipe/config changes; escalated with evidence.",
+                    "matched_signals": "High production impact. Could be a sudden event or a gradual shift.",
+                    "resolution": "Cross-checked measurements. Compared recent configuration changes. Escalated with evidence.",
                 }
             )
 
     next_checks: List[Dict[str, str]] = [
         {
-            "category": "Scope & segmentation",
-            "check": "Segment the anomaly by site/tool_group/process_step and compare impacted vs non-impacted slices.",
-            "why": "Confirm whether this is localized (single segment) or systemic (multi-segment).",
+            "category": "Narrow the scope",
+            "check": "Break down the issue by location, machine, and process step. Compare affected vs unaffected areas to find what's different.",
+            "why": "Confirm whether this is limited to one area or a wider systemic problem.",
         },
         {
-            "category": "Measurement validation",
-            "check": "Validate measurement confidence: repeat measurement or cross-check with an independent signal.",
-            "why": "Avoid chasing a false anomaly caused by instrumentation or data pipeline issues.",
+            "category": "Verify the data",
+            "check": "Double-check the measurements are accurate. Re-measure or use a different method to confirm the issue is real.",
+            "why": "Avoid chasing a false alarm caused by bad measurements or data pipeline issues.",
         },
     ]
 
     if severity == "high":
         next_checks.append(
             {
-                "category": "Recent changes review",
-                "check": "Review recent changes (recipes/configs/maintenance/software) within the reported time window.",
-                "why": "High severity warrants prioritizing change-driven hypotheses early.",
+                "category": "Check recent changes",
+                "check": "Review any changes (process settings, software, maintenance) made within the reported time window.",
+                "why": "High severity — prioritize finding if a recent change triggered this.",
             }
         )
         next_checks.append(
             {
-                "category": "Escalation packaging",
-                "check": "Prepare an escalation packet: summary, scope, evidence, missing info, and next steps attempted.",
-                "why": "Enables fast handoff to SMEs without losing investigation context.",
+                "category": "Prepare escalation",
+                "check": "Package up: what happened, what's affected, what you've checked so far, and what's still unknown.",
+                "why": "Enables fast handoff to specialists without losing investigation context.",
             }
         )
     else:
         next_checks.append(
             {
-                "category": "Recent changes review",
-                "check": "Check for any recent changes that align with the anomaly start time.",
-                "why": "Even moderate issues are often change-correlated; confirm early to reduce search space.",
+                "category": "Check recent changes",
+                "check": "Look for any recent changes that line up with when the issue started.",
+                "why": "Even moderate issues are often triggered by a change. Confirming this early narrows the search.",
             }
         )
 
     escalation_summary = (
         "Escalation summary (decision-support only):\n"
         f"- Observed: {payload.get('anomaly_summary', '').strip() or '[no summary provided]'}\n"
-        f"- Context: site={payload.get('site')}, tool_group={payload.get('tool_group')}, "
-        f"process_step={payload.get('process_step')}, severity={payload.get('severity')}\n"
+        f"- Context: facility={payload.get('site')}, machine group={payload.get('tool_group')}, "
+        f"manufacturing step={payload.get('process_step')}, severity={payload.get('severity')}\n"
         f"- Evidence present: metrics_input_mode={payload.get('metrics_input_mode')}\n"
-        "- Missing: additional segmentation results and measurement cross-check notes\n"
-        "- Recommendation: Proceed with the next checks; escalate if scope expands or confidence is low.\n"
+        "- Missing: scope analysis results and measurement cross-check notes\n"
+        "- Recommendation: Proceed with the next checks. Escalate if the scope expands or data confidence is low.\n"
     )
 
     narrative = (
@@ -114,4 +114,3 @@ def build_placeholder_response(payload: Dict[str, Any]) -> Dict[str, Any]:
         },
     }
     return resp
-
