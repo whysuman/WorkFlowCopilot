@@ -216,7 +216,6 @@ def retrieve_similar_cases(
     Returns top-k cases with their similarity scores (descending),
     as List[Tuple[case_dict, similarity_score]].
     """
-    model = _get_model()
     query_text = payload_to_query_text(payload)
 
     query_params: Dict[str, Any] = {
