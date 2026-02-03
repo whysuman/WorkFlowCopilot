@@ -5,7 +5,6 @@ from typing import Any, Dict, Tuple
 from app.config import SITES, TOOL_GROUPS, PROCESS_STEPS, SEVERITY_LEVELS, DEFAULTS
 from app.core.readiness import compute_readiness
 from app.ui.output_render import render_readiness
-from app.ui.state import on_submit_callback
 
 
 def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
@@ -18,49 +17,48 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
     Returns:
       submit_clicked: bool
       inputs: dict with context/core/advanced + mode + form_metrics
-      metrics_json_raw: str (empty if mode != "JSON")
-
-    IMPORTANT (locked):
-      - JSON validation is NOT performed here (validate only on submit in main.py)
-      - Readiness in JSON mode uses "textarea non-empty" as the proxy for metrics completeness.
+      nlp_free_text: str (empty if mode != "NLP")
     """
     st.radio(
         "Metrics input mode",
-        ["Form", "JSON"],
+        ["Form", "NLP"],
         horizontal=True,
         key="mode"
     )
     mode = st.session_state.mode  # persist across reruns
-    # st.session_state.setdefault("show_json_metrics", False)
-    # st.session_state.setdefault("last_json_valid_on_submit", None)
+
     with st.form("input_form"):
         # ---------- Expanders ----------
         yield_pct = affected_lot_count = time_window_hours = None
         metric_variance = change_magnitude = measurement_confidence = rework_rate = None
-        with st.expander("Context", expanded=True):
-            st.caption("Where and how the issue is occurring.")
-            site = st.selectbox("Site", SITES, index=0, help="Which manufacturing facility reported the issue")
-            tool_group = st.selectbox("Tool group", TOOL_GROUPS, index=0, help="The specific machine cluster involved (e.g. etch tools, lithography tools)")
-            process_step = st.selectbox("Process step", PROCESS_STEPS, index=0, help="Which manufacturing step the issue occurred in")
-            severity = st.selectbox("Severity", SEVERITY_LEVELS, index=0, help="How urgent this is based on production impact")
-            timestamp = st.datetime_input("Timestamp", value=dt.datetime.now(), help="When the issue was first observed")
+        site = SITES[0]
+        tool_group = TOOL_GROUPS[0]
+        process_step = PROCESS_STEPS[0]
+        severity = SEVERITY_LEVELS[0]
+        timestamp = dt.datetime.now()
+        anomaly_summary = ""
+        nlp_free_text = ""
 
-        with st.expander("Core", expanded=False):
+        if mode == "Form":
+            with st.expander("Context", expanded=True):
+                st.caption("Where and how the issue is occurring.")
+                site = st.selectbox("Site", SITES, index=0, help="Which manufacturing facility reported the issue")
+                tool_group = st.selectbox("Tool group", TOOL_GROUPS, index=0, help="The specific machine cluster involved (e.g. etch tools, lithography tools)")
+                process_step = st.selectbox("Process step", PROCESS_STEPS, index=0, help="Which manufacturing step the issue occurred in")
+                severity = st.selectbox("Severity", SEVERITY_LEVELS, index=0, help="How urgent this is based on production impact")
+                timestamp = st.datetime_input("Timestamp", value=dt.datetime.now(), help="When the issue was first observed")
 
-
-            st.caption(
-                "Minimum information required to analyze the issue. "
-                "These signals describe the problem and its impact."
-            )
-            anomaly_summary = st.text_area(
-                "Anomaly summary",
-                placeholder="What changed, when did it start, and how was it detected?",
-                height=120,
-                help="Describe what changed, when it started, and how it was detected. The AI uses this to find similar historical cases.",
-            )
-            if mode == "Form":
-                # NOTE: Some Streamlit versions may not accept value=None in number_input.
-                # If yours errors, switch to numeric defaults and track "touched" later.
+            with st.expander("Core", expanded=False):
+                st.caption(
+                    "Minimum information required to analyze the issue. "
+                    "These signals describe the problem and its impact."
+                )
+                anomaly_summary = st.text_area(
+                    "Anomaly summary",
+                    placeholder="What changed, when did it start, and how was it detected?",
+                    height=120,
+                    help="Describe what changed, when it started, and how it was detected. The AI uses this to find similar historical cases.",
+                )
                 yield_pct = st.number_input(
                     "Yield (%)",
                     min_value=0.0,
@@ -86,20 +84,14 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
                     step=1,
                     help="How long the anomaly has been occurring. Short (<12h) = sudden event; long (>48h) = gradual drift.",
                 )
-            else:
-                st.caption("Core metrics will be provided via JSON input below.")
-                # open_metrics = st.form_submit_button(label="Open Metrics (JSON)",key="core_metrics")
-                # if open_metrics:
-                #     st.session_state.show_json_metrics = True
 
-        with st.expander("Advanced", expanded=False):
-            st.caption(
-                "Optional signals that improve confidence and precision. "
-                "Analysis can proceed without these."
-            )
-            if mode == "Form":
+            with st.expander("Advanced", expanded=False):
+                st.caption(
+                    "Optional signals that improve confidence and precision. "
+                    "Analysis can proceed without these."
+                )
                 metric_variance = st.number_input(
-                    "Metric variance (≥ 0)",
+                    "Metric variance (>= 0)",
                     min_value=0.0,
                     value=None,
                     placeholder=float(DEFAULTS["metric_variance"]),
@@ -131,35 +123,26 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
                     step=0.1,
                     help="Percentage of products that need to be fixed/reprocessed. Normal is <2%, above 8% is serious.",
                 )
-            else:
-                st.caption("Advanced metrics will be provided via JSON input below.")
-                # open_advanced_metrics = st.form_submit_button(label="Open Metrics (JSON)",key="advanced_metrics")
-                # if open_advanced_metrics:
-                #     st.session_state.show_json_advanced_metrics = True
 
-        
-        # --- JSON mode textarea (UI only; NO validation here) ---
-        with st.expander("Metrics JSON input", expanded=(mode == "JSON")):
-            metrics_json_raw = ""
-            if mode == "JSON":
-                if st.session_state.last_json_valid_on_submit is False:
-                    st.warning("Previous JSON was invalid. Please correct before submitting.")
-                    st.error(f"Validation Error: {st.session_state.json_validation_error}")
-                elif st.session_state.last_json_valid_on_submit is None:
-                    st.info("No prior JSON metrics submitted.")
-                else:
-                    st.success("Previous JSON was valid.")
-                    st.markdown("**Metrics (JSON)**")
-                st.caption("Strict schema + numeric types. Validation happens only on Submit.")
-                metrics_json_raw = st.text_area(
-                    "Paste metrics JSON",
-                    height=220,
-                    placeholder=st.session_state.get("json_example", ""),
-                )
-            else:
-                st.caption("Submitting metrics from: **Form** (JSON will be ignored).")
+        else:
+            # NLP mode: single free-text textarea
+            st.markdown("**Describe the manufacturing issue in plain language.**")
+            st.caption(
+                "The AI will extract site, tool group, process step, severity, metrics, "
+                "and anomaly summary from your description. An LLM backend is required."
+            )
+            nlp_free_text = st.text_area(
+                "Free-text investigation description",
+                height=280,
+                placeholder=(
+                    "Example: Yield dropped to 78% on ETCH-CLUSTER-1 at Plant-A, "
+                    "12 lots affected over 24 hours, high severity etch issue. "
+                    "Variance is 0.45, change magnitude -8.5, measurement confidence 0.65, "
+                    "rework rate 6.1%."
+                ),
+            )
 
-        # Build form_metrics dict (even if mode == JSON; main.py will ignore them)
+        # Build form_metrics dict (used in Form mode; ignored in NLP mode)
         form_metrics = {
             "yield_pct": yield_pct,
             "metric_variance": metric_variance,
@@ -170,8 +153,8 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
             "time_window_hours": time_window_hours,
         }
 
-        # --- Readiness (no JSON validation pre-submit) ---
-        json_metrics_present = (mode == "JSON") and (metrics_json_raw.strip() != "")
+        # --- Readiness ---
+        nlp_text_present = (mode == "NLP") and (len(nlp_free_text.strip()) >= 30)
         readiness_pct = compute_readiness(
             site=site,
             tool_group=tool_group,
@@ -181,8 +164,8 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
             anomaly_summary=anomaly_summary,
             mode=mode,
             form_metrics=form_metrics,
-            json_metrics_present=json_metrics_present,  # NOTE: readiness.py should use this (not "valid")
-            anomaly_min_chars=10,  # raise threshold (locked improvement)
+            nlp_text_present=nlp_text_present,
+            anomaly_min_chars=10,
         )
         st.session_state.readiness_pct = readiness_pct
 
@@ -191,11 +174,7 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
 
         # --- Submit control ---
         st.caption(f"Submitting metrics from: **{mode}**")
-        submit_clicked = st.form_submit_button(
-            "Submit investigation",
-            on_click=on_submit_callback,
-            args=(metrics_json_raw, mode)
-        )
+        submit_clicked = st.form_submit_button("Submit investigation")
 
     inputs: Dict[str, Any] = {
         "site": site,
@@ -207,4 +186,4 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
         "mode": mode,
         "form_metrics": form_metrics,
     }
-    return submit_clicked, inputs, metrics_json_raw
+    return submit_clicked, inputs, nlp_free_text

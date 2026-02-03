@@ -16,6 +16,34 @@ def render_readiness(pct: int) -> None:
 def render_outputs(last_response: Optional[Dict[str, Any]]) -> None:
     """Right column output sections in strict order."""
 
+    # --- NLP Extracted Fields (if available) ---
+    nlp_result = st.session_state.get("nlp_extraction_result")
+    if nlp_result:
+        with st.expander("Extracted fields (NLP)", expanded=True):
+            col_ctx, col_met = st.columns(2)
+            with col_ctx:
+                st.markdown("**Context**")
+                st.write(f"Site: {nlp_result.get('site') or '—'}")
+                st.write(f"Tool group: {nlp_result.get('tool_group') or '—'}")
+                st.write(f"Process step: {nlp_result.get('process_step') or '—'}")
+                st.write(f"Severity: {nlp_result.get('severity') or '—'}")
+                summary = nlp_result.get("anomaly_summary") or "—"
+                st.write(f"Summary: {summary}")
+            with col_met:
+                st.markdown("**Metrics**")
+                metric_labels = {
+                    "yield_pct": "Yield (%)",
+                    "metric_variance": "Variance",
+                    "change_magnitude": "Change magnitude",
+                    "measurement_confidence": "Measurement confidence",
+                    "affected_lot_count": "Affected lots",
+                    "rework_rate": "Rework rate (%)",
+                    "time_window_hours": "Time window (hours)",
+                }
+                for key, label in metric_labels.items():
+                    val = nlp_result.get(key)
+                    st.write(f"{label}: {val if val is not None else '—'}")
+
     # --- Investigation Assessment ---
     st.subheader("Investigation assessment")
     if not last_response:
@@ -126,4 +154,12 @@ def render_outputs(last_response: Optional[Dict[str, Any]]) -> None:
         if model:
             parts.append(f"Model: {model}")
         parts.append(f"RAG cases: {rag_count}")
+        timings = meta.get("timings", {})
+        if timings:
+            rag_ms = timings.get("rag_retrieval_ms", 0)
+            llm_ms = timings.get("llm_generation_ms", 0)
+            total_ms = timings.get("total_ms", 0)
+            parts.append(f"Total: {total_ms}ms (RAG: {rag_ms}ms, LLM: {llm_ms}ms)")
+        if meta.get("from_cache"):
+            parts.append("(cached)")
         st.caption(" | ".join(parts))

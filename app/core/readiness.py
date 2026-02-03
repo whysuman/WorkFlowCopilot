@@ -38,7 +38,7 @@ def compute_readiness(
     anomaly_summary: str,
     mode: str,
     form_metrics: Dict[str, Any],
-    json_metrics_present: bool,
+    nlp_text_present: bool = False,
     anomaly_min_chars: int = 10,
 ) -> int:
     """
@@ -49,50 +49,42 @@ def compute_readiness(
       - Core (4): anomaly_summary, yield_pct, affected_lot_count, time_window_hours
       - Advanced (4): metric_variance, change_magnitude, measurement_confidence, rework_rate
 
-    Locked behavior:
-      - JSON is NOT validated here (validate only on submit).
-      - In JSON mode, metric fields are counted as filled if json_metrics_present is True.
+    In NLP mode, all 12 non-timestamp fields are counted as present if
+    nlp_text_present is True (free text >= 30 chars).
     """
     filled = 0
 
-    # -------------------------
-    # Context (5)
-    # -------------------------
-    filled += int(is_dropdown_filled(site, SITES))
-    filled += int(is_dropdown_filled(tool_group, TOOL_GROUPS))
-    filled += int(is_dropdown_filled(process_step, PROCESS_STEPS))
-    filled += int(is_dropdown_filled(severity, SEVERITY_LEVELS))
-    filled += 1  # timestamp counts as filled by default
+    if mode == "NLP":
+        # NLP mode: free text covers all fields (context + metrics + summary)
+        # timestamp always counts as 1
+        filled += 1
+        if nlp_text_present:
+            filled += 12  # all non-timestamp fields
+    else:
+        # -------------------------
+        # Context (5)
+        # -------------------------
+        filled += int(is_dropdown_filled(site, SITES))
+        filled += int(is_dropdown_filled(tool_group, TOOL_GROUPS))
+        filled += int(is_dropdown_filled(process_step, PROCESS_STEPS))
+        filled += int(is_dropdown_filled(severity, SEVERITY_LEVELS))
+        filled += 1  # timestamp counts as filled by default
 
-    # -------------------------
-    # Core (4)
-    # -------------------------
-    filled += int(is_text_filled(anomaly_summary, min_chars=anomaly_min_chars))
-
-    if mode == "Form":
+        # -------------------------
+        # Core (4)
+        # -------------------------
+        filled += int(is_text_filled(anomaly_summary, min_chars=anomaly_min_chars))
         filled += int(is_number_filled(form_metrics.get("yield_pct")))
         filled += int(is_number_filled(form_metrics.get("affected_lot_count")))
         filled += int(is_number_filled(form_metrics.get("time_window_hours")))
-    else:
-        # JSON mode: treat all core metrics as "present" if textarea is non-empty
-        filled += int(json_metrics_present)
-        filled += int(json_metrics_present)
-        filled += int(json_metrics_present)
 
-    # -------------------------
-    # Advanced (4)
-    # -------------------------
-    if mode == "Form":
+        # -------------------------
+        # Advanced (4)
+        # -------------------------
         filled += int(is_number_filled(form_metrics.get("metric_variance")))
         filled += int(is_number_filled(form_metrics.get("change_magnitude")))
         filled += int(is_number_filled(form_metrics.get("measurement_confidence")))
         filled += int(is_number_filled(form_metrics.get("rework_rate")))
-    else:
-        # JSON mode: treat advanced metrics as "present" if textarea is non-empty
-        filled += int(json_metrics_present)
-        filled += int(json_metrics_present)
-        filled += int(json_metrics_present)
-        filled += int(json_metrics_present)
 
     pct = int((filled / 13) * 100)
     return max(0, min(100, pct))

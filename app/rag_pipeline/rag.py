@@ -235,6 +235,16 @@ def retrieve_similar_cases(
         query_params.pop("where", None)
         results = collection.query(**query_params)
 
+    # If filtered query returned zero results, retry without filters
+    has_results = (
+        results
+        and results.get("metadatas")
+        and results["metadatas"][0]
+    )
+    if not has_results and "where" in query_params:
+        query_params.pop("where")
+        results = collection.query(**query_params)
+
     output: List[Tuple[Dict[str, Any], float]] = []
 
     if results and results["metadatas"] and results["distances"]:

@@ -7,7 +7,12 @@ Backends (priority order):
   3. Placeholder fallback (no external dependencies)
 
 All generation functions return None on any failure, allowing the
-orchestrator (ai_engine.py) to fall through to the next backend.
+orchestrator (engine.py) to fall through to the next backend.
+
+Resilience features:
+  - Tenacity retry with exponential backoff on transient failures
+  - HuggingFace JSON mode (response_format=json_object)
+  - Pydantic v2 validation of LLM outputs
 """
 from __future__ import annotations
 
@@ -16,6 +21,25 @@ import logging
 import os
 from typing import Any, Dict, List, Optional, Tuple
 
+from pydantic import ValidationError
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
+
+from app.config import (
+    HF_MODEL,
+    OLLAMA_MODEL,
+    LLM_MAX_TOKENS,
+    LLM_TEMPERATURE,
+    LLM_TIMEOUT,
+    LLM_MAX_RETRIES,
+    LLM_RETRY_WAIT_MIN,
+    LLM_RETRY_WAIT_MAX,
+    SITES,
+    TOOL_GROUPS,
+    PROCESS_STEPS,
+    SEVERITY_LEVELS,
+)
+from app.core.models import LLMInvestigationResponse, LLMAssessmentResponse, NLPExtractionResponse
+
 logger = logging.getLogger(__name__)
 
 try:
@@ -23,10 +47,6 @@ try:
     load_dotenv()
 except ImportError:
     pass
-
-HF_MODEL = "Qwen/Qwen2.5-72B-Instruct:novita"
-OLLAMA_MODEL = "llama3.2:3b"
-OLLAMA_TIMEOUT = 60
 
 
 # ---------------------------------------------------------------------------
@@ -197,52 +217,57 @@ def _extract_json(raw: str) -> Optional[Dict[str, Any]]:
 
 
 # ---------------------------------------------------------------------------
-# HuggingFace backend
+# HuggingFace backend (with retry + JSON mode)
 # ---------------------------------------------------------------------------
 
+@retry(
+    stop=stop_after_attempt(LLM_MAX_RETRIES),
+    wait=wait_exponential(multiplier=1, min=LLM_RETRY_WAIT_MIN, max=LLM_RETRY_WAIT_MAX),
+    retry=retry_if_exception_type(Exception),
+    reraise=True,
+)
 def _call_huggingface(system_prompt: str, user_prompt: str) -> Optional[str]:
-    """Call HuggingFace Inference API. Returns raw text or None."""
-    try:
-        from huggingface_hub import InferenceClient
-        token = os.environ.get("HF_TOKEN", "")
-        client = InferenceClient(api_key=token)
+    """Call HuggingFace Inference API with retry and JSON mode. Returns raw text or None."""
+    from huggingface_hub import InferenceClient
+    token = os.environ.get("HF_TOKEN", "")
+    client = InferenceClient(api_key=token)
 
-        messages = [
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": user_prompt},
+    ]
+    response = client.chat.completions.create(
+        model=HF_MODEL,
+        messages=messages,
+        max_tokens=LLM_MAX_TOKENS,
+        temperature=LLM_TEMPERATURE,
+        response_format={"type": "json_object"},
+    )
+    return response.choices[0].message.content
+
+
+# ---------------------------------------------------------------------------
+# Ollama backend (with retry)
+# ---------------------------------------------------------------------------
+
+@retry(
+    stop=stop_after_attempt(LLM_MAX_RETRIES),
+    wait=wait_exponential(multiplier=1, min=LLM_RETRY_WAIT_MIN, max=LLM_RETRY_WAIT_MAX),
+    retry=retry_if_exception_type(Exception),
+    reraise=True,
+)
+def _call_ollama(system_prompt: str, user_prompt: str) -> Optional[str]:
+    """Call local Ollama server with retry. Returns raw text or None."""
+    import ollama
+    response = ollama.chat(
+        model=OLLAMA_MODEL,
+        messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
-        ]
-        response = client.chat.completions.create(
-            model=HF_MODEL,
-            messages=messages,
-            max_tokens=1024,
-            temperature=0.3,
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        logger.warning("HuggingFace call failed: %s", e)
-        return None
-
-
-# ---------------------------------------------------------------------------
-# Ollama backend
-# ---------------------------------------------------------------------------
-
-def _call_ollama(system_prompt: str, user_prompt: str) -> Optional[str]:
-    """Call local Ollama server. Returns raw text or None."""
-    try:
-        import ollama
-        response = ollama.chat(
-            model=OLLAMA_MODEL,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt},
-            ],
-            options={"temperature": 0.3, "num_predict": 1024},
-        )
-        return response["message"]["content"]
-    except Exception as e:
-        logger.warning("Ollama call failed: %s", e)
-        return None
+        ],
+        options={"temperature": LLM_TEMPERATURE, "num_predict": LLM_MAX_TOKENS},
+    )
+    return response["message"]["content"]
 
 
 # ---------------------------------------------------------------------------
@@ -250,11 +275,14 @@ def _call_ollama(system_prompt: str, user_prompt: str) -> Optional[str]:
 # ---------------------------------------------------------------------------
 
 def _call_backend(system_prompt: str, user_prompt: str, backend: str) -> Optional[str]:
-    """Route to the appropriate backend."""
-    if backend == "huggingface":
-        return _call_huggingface(system_prompt, user_prompt)
-    elif backend == "ollama":
-        return _call_ollama(system_prompt, user_prompt)
+    """Route to the appropriate backend. Catches all exceptions after retries exhaust."""
+    try:
+        if backend == "huggingface":
+            return _call_huggingface(system_prompt, user_prompt)
+        elif backend == "ollama":
+            return _call_ollama(system_prompt, user_prompt)
+    except Exception as e:
+        logger.warning("%s call failed after retries: %s", backend, e)
     return None
 
 
@@ -265,7 +293,7 @@ def generate_llm_response(
 ) -> Optional[Dict[str, Any]]:
     """
     Generate narrative, next checks, and escalation summary via LLM.
-    Returns parsed dict or None on any failure.
+    Returns Pydantic-validated dict or None on any failure.
     """
     if backend == "placeholder":
         return None
@@ -274,7 +302,18 @@ def generate_llm_response(
     raw = _call_backend(_INVESTIGATION_SYSTEM_PROMPT, user_prompt, backend)
     if raw is None:
         return None
-    return _extract_json(raw)
+
+    parsed = _extract_json(raw)
+    if parsed is None:
+        logger.warning("LLM response was not valid JSON")
+        return None
+
+    try:
+        validated = LLMInvestigationResponse(**parsed)
+        return validated.model_dump(mode="json")
+    except ValidationError as e:
+        logger.warning("LLM investigation response failed validation: %s", e)
+        return None
 
 
 def assess_investigation_llm(
@@ -284,8 +323,8 @@ def assess_investigation_llm(
 ) -> Optional[Dict[str, str]]:
     """
     Use LLM to assess the investigation for the engineer.
-    Returns dict with pattern, priority, confidence, diagnostic_approach, reasoning
-    or None on failure.
+    Returns Pydantic-validated dict with pattern, priority, confidence,
+    diagnostic_approach, reasoning — or None on failure.
     """
     if backend == "placeholder":
         return None
@@ -294,4 +333,74 @@ def assess_investigation_llm(
     raw = _call_backend(_ASSESSMENT_SYSTEM_PROMPT, user_prompt, backend)
     if raw is None:
         return None
-    return _extract_json(raw)
+
+    parsed = _extract_json(raw)
+    if parsed is None:
+        logger.warning("LLM assessment response was not valid JSON")
+        return None
+
+    try:
+        validated = LLMAssessmentResponse(**parsed)
+        return validated.model_dump(mode="json")
+    except ValidationError as e:
+        logger.warning("LLM assessment response failed validation: %s", e)
+        return None
+
+
+# ---------------------------------------------------------------------------
+# NLP free-text field extraction
+# ---------------------------------------------------------------------------
+
+_EXTRACTION_SYSTEM_PROMPT = (
+    "You are a structured data extractor for semiconductor manufacturing investigations. "
+    "Given a free-text description of a manufacturing issue, extract as many fields as possible "
+    "into the JSON format below. Only include fields you are confident about from the text. "
+    "Use null for any field not mentioned or unclear.\n\n"
+    "Valid values for categorical fields:\n"
+    f"- site: one of {SITES[1:]}\n"
+    f"- tool_group: one of {TOOL_GROUPS[1:]}\n"
+    f"- process_step: one of {PROCESS_STEPS[1:]}\n"
+    f"- severity: one of {SEVERITY_LEVELS[1:]}\n\n"
+    "Respond in this exact JSON format:\n"
+    "{\n"
+    '  "site": "string or null",\n'
+    '  "tool_group": "string or null",\n'
+    '  "process_step": "string or null",\n'
+    '  "severity": "string or null",\n'
+    '  "anomaly_summary": "string or null — a concise summary of the issue",\n'
+    '  "yield_pct": number or null,\n'
+    '  "metric_variance": number or null,\n'
+    '  "change_magnitude": number or null,\n'
+    '  "measurement_confidence": number or null,\n'
+    '  "affected_lot_count": integer or null,\n'
+    '  "rework_rate": number or null,\n'
+    '  "time_window_hours": integer or null\n'
+    "}\n\n"
+    "IMPORTANT: Return ONLY valid JSON. No markdown, no explanation outside the JSON."
+)
+
+
+def extract_fields_from_text(free_text: str, backend: str) -> Optional[Dict[str, Any]]:
+    """
+    Extract structured investigation fields from free-text using an LLM.
+    Returns Pydantic-validated dict or None on failure.
+    Requires an LLM backend — returns None for 'placeholder'.
+    """
+    if backend == "placeholder":
+        return None
+
+    raw = _call_backend(_EXTRACTION_SYSTEM_PROMPT, free_text, backend)
+    if raw is None:
+        return None
+
+    parsed = _extract_json(raw)
+    if parsed is None:
+        logger.warning("NLP extraction response was not valid JSON")
+        return None
+
+    try:
+        validated = NLPExtractionResponse(**parsed)
+        return validated.model_dump(mode="json")
+    except ValidationError as e:
+        logger.warning("NLP extraction response failed validation: %s", e)
+        return None

@@ -1,24 +1,16 @@
 """
-AI Engine: orchestrates RAG retrieval, LLM generation, and investigation assessment.
-Single entry point for the entire AI pipeline with graceful fallback.
-
-Flow:
-  1. Check response cache (skip pipeline if hit)
-  2. RAG retrieval with minimum similarity filtering
-  3. Detect LLM backend (HuggingFace -> Ollama -> placeholder)
-  4. If LLM available: generate narrative + assessment via LLM
-  5. If LLM unavailable: placeholder response + rule-based assessment
-  6. Always includes: investigation assessment, response metadata, pipeline timings
+Streamlit-free wrapper around the RAG pipeline.
+Replicates build_ai_response() logic from app/rag_pipeline/engine.py
+without any Streamlit dependency.
 """
 from __future__ import annotations
 
 import datetime as dt
 import hashlib
 import json
+import logging
 import time
 from typing import Any, Dict, List, Optional, Tuple
-
-import streamlit as st
 
 from app.rag_pipeline.rag import load_cases, build_or_load_collection, retrieve_similar_cases
 from app.rag_pipeline.llm import (
@@ -30,13 +22,44 @@ from app.rag_pipeline.triage import assess_investigation
 from app.rag_pipeline.placeholder import build_placeholder_response
 from app.config import CASES_PATH, HF_MODEL, OLLAMA_MODEL, MIN_SIMILARITY_SCORE
 
+logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Module-level singletons (replaces @st.cache_resource)
+# ---------------------------------------------------------------------------
+
+_cases: Optional[List[Dict[str, Any]]] = None
+_collection: Optional[Any] = None
+_response_cache: dict[str, Dict[str, Any]] = {}
+
+
+def init_rag_pipeline() -> Tuple[Optional[List[Dict[str, Any]]], Optional[Any]]:
+    """
+    Initialize RAG pipeline once (module-level singleton).
+    Loads cases and builds/loads the ChromaDB collection.
+    Returns (cases, collection) or (None, None) on failure.
+    """
+    global _cases, _collection
+    if _cases is not None and _collection is not None:
+        return _cases, _collection
+    try:
+        _cases = load_cases(CASES_PATH)
+        _collection = build_or_load_collection(_cases, CASES_PATH)
+        logger.info("RAG pipeline initialized: %d cases loaded", len(_cases))
+        return _cases, _collection
+    except Exception as e:
+        logger.warning("RAG pipeline initialization failed: %s", e)
+        return None, None
+
+
+def is_rag_loaded() -> bool:
+    """Check if RAG pipeline is initialized."""
+    return _cases is not None and _collection is not None
+
 
 # ---------------------------------------------------------------------------
 # Response cache
 # ---------------------------------------------------------------------------
-
-_response_cache: dict[str, Dict[str, Any]] = {}
-
 
 def _payload_hash(payload: Dict[str, Any]) -> str:
     """Deterministic hash of payload for cache key."""
@@ -45,35 +68,37 @@ def _payload_hash(payload: Dict[str, Any]) -> str:
 
 
 # ---------------------------------------------------------------------------
-# RAG initialization (Streamlit-cached)
+# Main orchestration (mirrors engine.py without Streamlit)
 # ---------------------------------------------------------------------------
 
-@st.cache_resource
-def init_rag_pipeline() -> Tuple[Optional[List[Dict[str, Any]]], Optional[Any]]:
+def _format_retrieved_cases(
+    retrieved: List[Tuple[Dict[str, Any], float]],
+) -> List[Dict[str, str]]:
+    """Convert RAG results into the display format."""
+    display = []
+    for case, score in retrieved:
+        if score >= 0.85:
+            sim_label = "High"
+        elif score >= 0.65:
+            sim_label = "Medium"
+        else:
+            sim_label = "Low"
+
+        display.append({
+            "case_id": case.get("case_id", ""),
+            "family": case.get("family", ""),
+            "similarity": sim_label,
+            "similarity_score": f"{score:.2f}",
+            "matched_signals": case.get("matched_signals_template", ""),
+            "resolution": case.get("resolution_summary", ""),
+        })
+    return display
+
+
+def build_ai_response_api(payload: Dict[str, Any]) -> Dict[str, Any]:
     """
-    Initialize RAG pipeline once (cached across Streamlit reruns).
-    Loads cases and builds/loads the ChromaDB collection.
-    Returns (cases, collection) or (None, None) on failure.
-    """
-    try:
-        cases = load_cases(CASES_PATH)
-        collection = build_or_load_collection(cases, CASES_PATH)
-        return cases, collection
-    except Exception as e:
-        st.warning(f"RAG pipeline initialization failed: {e}")
-        return None, None
-
-
-# ---------------------------------------------------------------------------
-# Main orchestration
-# ---------------------------------------------------------------------------
-
-def build_ai_response(payload: Dict[str, Any]) -> Dict[str, Any]:
-    """
-    Main orchestration function.
-
-    Returns a response dict compatible with render_outputs().
-    Includes per-step timing and payload-hash caching.
+    Main orchestration function for the API.
+    Mirrors engine.py build_ai_response() without Streamlit.
     """
     # --- Cache check ---
     cache_key = _payload_hash(payload)
@@ -93,7 +118,6 @@ def build_ai_response(payload: Dict[str, Any]) -> Dict[str, Any]:
 
     if rag_available:
         try:
-            # Build metadata filters from payload context fields
             filters = {
                 "process_step": payload.get("process_step", ""),
                 "site": payload.get("site", ""),
@@ -102,13 +126,12 @@ def build_ai_response(payload: Dict[str, Any]) -> Dict[str, Any]:
             retrieved_cases = retrieve_similar_cases(
                 payload, cases, collection, top_k=3, filters=filters,
             )
-            # Filter out weak matches below minimum similarity threshold
             retrieved_cases = [
                 (case, score) for case, score in retrieved_cases
                 if score >= MIN_SIMILARITY_SCORE
             ]
         except Exception as e:
-            st.warning(f"RAG retrieval failed: {e}")
+            logger.warning("RAG retrieval failed: %s", e)
             rag_available = False
     timings["rag_retrieval_ms"] = int((time.perf_counter() - t0) * 1000)
 
@@ -123,19 +146,16 @@ def build_ai_response(payload: Dict[str, Any]) -> Dict[str, Any]:
     timings["llm_generation_ms"] = int((time.perf_counter() - t0) * 1000)
 
     if llm_response is not None:
-        # LLM succeeded
         narrative = llm_response.get("narrative", "")
         next_checks = llm_response.get("next_checks", [])
         escalation_summary = llm_response.get("escalation_summary", "")
 
-        # Ensure minimum 2 checks
         if len(next_checks) < 2:
             placeholder = build_placeholder_response(payload)
             next_checks = placeholder["next_checks"]
 
         similar_cases_display = _format_retrieved_cases(retrieved_cases)
 
-        # Assessment via LLM
         t0 = time.perf_counter()
         assessment = assess_investigation_llm(payload, retrieved_cases, backend)
         timings["llm_assessment_ms"] = int((time.perf_counter() - t0) * 1000)
@@ -170,12 +190,10 @@ def build_ai_response(payload: Dict[str, Any]) -> Dict[str, Any]:
     # --- Step 4: Fallback path ---
     response = build_placeholder_response(payload)
 
-    # Still use RAG results for similar_cases if available
     if retrieved_cases:
         response["similar_cases"] = _format_retrieved_cases(retrieved_cases)
         response["no_strong_match_note"] = None
 
-    # Rule-based assessment (always available)
     t0 = time.perf_counter()
     assessment = assess_investigation(payload, retrieved_cases or [])
     timings["llm_assessment_ms"] = int((time.perf_counter() - t0) * 1000)
@@ -196,27 +214,3 @@ def build_ai_response(payload: Dict[str, Any]) -> Dict[str, Any]:
 
     _response_cache[cache_key] = response
     return response
-
-
-def _format_retrieved_cases(
-    retrieved: List[Tuple[Dict[str, Any], float]],
-) -> List[Dict[str, str]]:
-    """Convert RAG results into the display format expected by render_outputs()."""
-    display = []
-    for case, score in retrieved:
-        if score >= 0.85:
-            sim_label = "High"
-        elif score >= 0.65:
-            sim_label = "Medium"
-        else:
-            sim_label = "Low"
-
-        display.append({
-            "case_id": case.get("case_id", ""),
-            "family": case.get("family", ""),
-            "similarity": sim_label,
-            "similarity_score": f"{score:.2f}",
-            "matched_signals": case.get("matched_signals_template", ""),
-            "resolution": case.get("resolution_summary", ""),
-        })
-    return display

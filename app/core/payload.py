@@ -11,13 +11,13 @@ def build_payload(
     anomaly_summary: str,
     mode: str,
     form_metrics: Dict[str, Any],
-    json_metrics: Optional[Dict[str, Any]],
+    nlp_metrics: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """Construct the request payload according to locked v1 input contract."""
     metrics: Dict[str, Any]
-    if mode == "JSON":
+    if mode == "NLP":
         # Active mode wins
-        metrics = dict(json_metrics or {})
+        metrics = dict(nlp_metrics or {})
     else:
         metrics = dict(form_metrics)
 
@@ -31,4 +31,3 @@ def build_payload(
         "metrics": metrics,
         "metrics_input_mode": mode,
     }
-
