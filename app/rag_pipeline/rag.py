@@ -1,32 +1,34 @@
 """
-RAG pipeline: embedding-based retrieval over historical investigation cases.
-Uses sentence-transformers with BAAI/bge-small-en-v1.5 for local embeddings.
-Pre-computes and caches embeddings to disk as .npy files.
+RAG pipeline: ChromaDB-backed retrieval over historical investigation cases.
+Uses sentence-transformers with BAAI/bge-small-en-v1.5 via ChromaDB's
+SentenceTransformerEmbeddingFunction. Supports metadata filtering for
+pre-filtering by process_step, site, tool_group, etc.
 """
 from __future__ import annotations
 
 import json
 import hashlib
-from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
-import numpy as np
+import chromadb
+from chromadb.utils.embedding_functions import SentenceTransformerEmbeddingFunction
 
-_model = None
+from app.config import CHROMA_PERSIST_DIR
 
 MODEL_NAME = "BAAI/bge-small-en-v1.5"
-EMBEDDINGS_DIR = Path(__file__).parent.parent.parent / "data"
-EMBEDDINGS_FILE = EMBEDDINGS_DIR / "case_embeddings.npy"
-EMBEDDINGS_HASH_FILE = EMBEDDINGS_DIR / "case_embeddings_hash.txt"
+COLLECTION_NAME = "investigation_cases"
+
+_chroma_client: Optional[chromadb.ClientAPI] = None
+_embedding_fn: Optional[SentenceTransformerEmbeddingFunction] = None
+_collection: Optional[chromadb.Collection] = None
 
 
-def _get_model():
-    """Lazy-load the sentence-transformer model (cached after first call)."""
-    global _model
-    if _model is None:
-        from sentence_transformers import SentenceTransformer
-        _model = SentenceTransformer(MODEL_NAME)
-    return _model
+def _get_embedding_fn() -> SentenceTransformerEmbeddingFunction:
+    """Lazy-load the SentenceTransformerEmbeddingFunction (cached after first call)."""
+    global _embedding_fn
+    if _embedding_fn is None:
+        _embedding_fn = SentenceTransformerEmbeddingFunction(model_name=MODEL_NAME)
+    return _embedding_fn
 
 
 def case_to_text(case: Dict[str, Any]) -> str:
@@ -97,58 +99,150 @@ def load_cases(cases_path: str) -> List[Dict[str, Any]]:
         return json.load(f)
 
 
-def build_or_load_embeddings(
+def _extract_case_metadata(case: Dict[str, Any]) -> Dict[str, str]:
+    """Extract filterable metadata fields from a case record."""
+    ctx = case.get("context", {})
+    signals = case.get("signals", {})
+    return {
+        "case_id": case.get("case_id", ""),
+        "process_step": ctx.get("process_step", ""),
+        "site": ctx.get("site", ""),
+        "tool_group": ctx.get("tool_group", ""),
+        "yield_severity": signals.get("yield_severity", ""),
+        "family": case.get("family", ""),
+        "_case_json": json.dumps(case),
+    }
+
+
+def build_or_load_collection(
     cases: List[Dict[str, Any]],
     cases_path: str,
-) -> np.ndarray:
+    persist_dir: Optional[str] = None,
+) -> chromadb.Collection:
     """
-    Build embeddings for all cases, or load from cache if cases haven't changed.
-    Returns numpy array of shape (n_cases, embedding_dim).
+    Build a ChromaDB collection from cases, or load from persistent storage
+    if the cases file hasn't changed. Replaces build_or_load_embeddings().
+
+    Returns a chromadb.Collection ready for querying.
     """
+    global _chroma_client, _collection
+
+    if persist_dir is None:
+        persist_dir = CHROMA_PERSIST_DIR
+
     current_hash = _compute_file_hash(cases_path)
 
-    if EMBEDDINGS_FILE.exists() and EMBEDDINGS_HASH_FILE.exists():
-        cached_hash = EMBEDDINGS_HASH_FILE.read_text().strip()
-        if cached_hash == current_hash:
-            return np.load(str(EMBEDDINGS_FILE))
+    # Initialize persistent client
+    _chroma_client = chromadb.PersistentClient(path=persist_dir)
+    ef = _get_embedding_fn()
 
-    model = _get_model()
-    texts = [case_to_text(c) for c in cases]
-    embeddings = model.encode(texts, show_progress_bar=False, convert_to_numpy=True)
+    # Check if collection exists with matching hash and count
+    existing_names = [c.name for c in _chroma_client.list_collections()]
+    needs_rebuild = True
 
-    np.save(str(EMBEDDINGS_FILE), embeddings)
-    EMBEDDINGS_HASH_FILE.write_text(current_hash)
+    if COLLECTION_NAME in existing_names:
+        collection = _chroma_client.get_collection(
+            name=COLLECTION_NAME,
+            embedding_function=ef,
+        )
+        # Check hash via collection metadata and count
+        coll_meta = collection.metadata or {}
+        if (
+            coll_meta.get("cases_hash") == current_hash
+            and collection.count() == len(cases)
+        ):
+            needs_rebuild = False
+            _collection = collection
+            return collection
 
-    return embeddings
+    if needs_rebuild:
+        # Delete stale collection if it exists
+        if COLLECTION_NAME in existing_names:
+            _chroma_client.delete_collection(name=COLLECTION_NAME)
+
+        # Create new collection with cosine distance
+        collection = _chroma_client.create_collection(
+            name=COLLECTION_NAME,
+            embedding_function=ef,
+            metadata={
+                "hnsw:space": "cosine",
+                "cases_hash": current_hash,
+            },
+        )
+
+        # Add all cases in a single batch
+        documents = [case_to_text(c) for c in cases]
+        metadatas = [_extract_case_metadata(c) for c in cases]
+        ids = [f"case_{i}" for i in range(len(cases))]
+
+        collection.add(
+            documents=documents,
+            metadatas=metadatas,
+            ids=ids,
+        )
+
+        _collection = collection
+        return collection
+
+
+def _build_where_clause(filters: Dict[str, str]) -> Optional[Dict[str, Any]]:
+    """
+    Convert a dict of field->value filters to ChromaDB where format.
+    Skips empty/placeholder values. Returns None if no valid filters.
+    """
+    conditions = []
+    for field, value in filters.items():
+        if value and not value.startswith("—"):
+            conditions.append({field: {"$eq": value}})
+
+    if not conditions:
+        return None
+    if len(conditions) == 1:
+        return conditions[0]
+    return {"$and": conditions}
 
 
 def retrieve_similar_cases(
     payload: Dict[str, Any],
     cases: List[Dict[str, Any]],
-    case_embeddings: np.ndarray,
+    collection: chromadb.Collection,
     top_k: int = 3,
+    filters: Optional[Dict[str, str]] = None,
 ) -> List[Tuple[Dict[str, Any], float]]:
     """
-    Embed the user payload, compute cosine similarity against all cases,
-    return top-k cases with their similarity scores (descending).
+    Query ChromaDB collection for similar cases using the user payload.
+    Optionally applies metadata filters for pre-filtering.
+
+    Returns top-k cases with their similarity scores (descending),
+    as List[Tuple[case_dict, similarity_score]].
     """
     model = _get_model()
     query_text = payload_to_query_text(payload)
-    query_embedding = model.encode([query_text], convert_to_numpy=True)[0]
 
-    # Cosine similarity
-    norms_cases = np.linalg.norm(case_embeddings, axis=1)
-    norm_query = np.linalg.norm(query_embedding)
+    query_params: Dict[str, Any] = {
+        "query_texts": [query_text],
+        "n_results": top_k,
+    }
 
-    # Avoid division by zero
-    norms_cases = np.maximum(norms_cases, 1e-10)
-    norm_query = max(norm_query, 1e-10)
+    if filters:
+        where_clause = _build_where_clause(filters)
+        if where_clause:
+            query_params["where"] = where_clause
 
-    similarities = (case_embeddings @ query_embedding) / (norms_cases * norm_query)
+    try:
+        results = collection.query(**query_params)
+    except Exception:
+        # If filtered query fails (e.g. no matching docs), retry without filters
+        query_params.pop("where", None)
+        results = collection.query(**query_params)
 
-    top_indices = np.argsort(similarities)[::-1][:top_k]
+    output: List[Tuple[Dict[str, Any], float]] = []
 
-    results = []
-    for idx in top_indices:
-        results.append((cases[int(idx)], float(similarities[idx])))
-    return results
+    if results and results["metadatas"] and results["distances"]:
+        for metadata, distance in zip(results["metadatas"][0], results["distances"][0]):
+            # ChromaDB cosine distance = 1 - similarity
+            similarity = 1.0 - distance
+            case_dict = json.loads(metadata["_case_json"])
+            output.append((case_dict, similarity))
+
+    return output
