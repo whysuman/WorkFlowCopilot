@@ -16,7 +16,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import streamlit as st
 
-from app.rag_pipeline.rag import load_cases, build_or_load_embeddings, retrieve_similar_cases
+from app.rag_pipeline.rag import load_cases, build_or_load_collection, retrieve_similar_cases
 from app.rag_pipeline.llm import (
     detect_backend,
     generate_llm_response,
@@ -28,19 +28,17 @@ from app.rag_pipeline.triage import assess_investigation
 from app.rag_pipeline.placeholder import build_placeholder_response
 from app.config import CASES_PATH
 
-# List[Dict[str, Any]]
-# np.ndarray
 @st.cache_resource
 def init_rag_pipeline() -> Tuple[Optional[List[Dict[str, Any]]], Optional[Any]]:
     """
     Initialize RAG pipeline once (cached across Streamlit reruns).
-    Loads cases and pre-computes embeddings.
-    Returns (cases, embeddings) or (None, None) on failure.
+    Loads cases and builds/loads the ChromaDB collection.
+    Returns (cases, collection) or (None, None) on failure.
     """
     try:
         cases = load_cases(CASES_PATH)
-        embeddings = build_or_load_embeddings(cases, CASES_PATH)
-        return cases, embeddings
+        collection = build_or_load_collection(cases, CASES_PATH)
+        return cases, collection
     except Exception as e:
         st.warning(f"RAG pipeline initialization failed: {e}")
         return None, None
@@ -53,13 +51,21 @@ def build_ai_response(payload: Dict[str, Any]) -> Dict[str, Any]:
     Returns a response dict compatible with render_outputs().
     """
     # --- Step 1: RAG retrieval ---
-    cases, embeddings = init_rag_pipeline()
+    cases, collection = init_rag_pipeline()
     retrieved_cases: List[Tuple[Dict[str, Any], float]] = []
-    rag_available = cases is not None and embeddings is not None
+    rag_available = cases is not None and collection is not None
 
     if rag_available:
         try:
-            retrieved_cases = retrieve_similar_cases(payload, cases, embeddings, top_k=3)
+            # Build metadata filters from payload context fields
+            filters = {
+                "process_step": payload.get("process_step", ""),
+                "site": payload.get("site", ""),
+                "tool_group": payload.get("tool_group", ""),
+            }
+            retrieved_cases = retrieve_similar_cases(
+                payload, cases, collection, top_k=3, filters=filters,
+            )
         except Exception as e:
             st.warning(f"RAG retrieval failed: {e}")
             rag_available = False
