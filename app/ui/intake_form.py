@@ -39,11 +39,11 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
         metric_variance = change_magnitude = measurement_confidence = rework_rate = None
         with st.expander("Context", expanded=True):
             st.caption("Where and how the issue is occurring.")
-            site = st.selectbox("Site", SITES, index=0)
-            tool_group = st.selectbox("Tool group", TOOL_GROUPS, index=0)
-            process_step = st.selectbox("Process step", PROCESS_STEPS, index=0)
-            severity = st.selectbox("Severity", SEVERITY_LEVELS, index=0)
-            timestamp = st.datetime_input("Timestamp", value=dt.datetime.now())
+            site = st.selectbox("Site", SITES, index=0, help="Which manufacturing facility reported the issue")
+            tool_group = st.selectbox("Tool group", TOOL_GROUPS, index=0, help="The specific machine cluster involved (e.g. etch tools, lithography tools)")
+            process_step = st.selectbox("Process step", PROCESS_STEPS, index=0, help="Which manufacturing step the issue occurred in")
+            severity = st.selectbox("Severity", SEVERITY_LEVELS, index=0, help="How urgent this is based on production impact")
+            timestamp = st.datetime_input("Timestamp", value=dt.datetime.now(), help="When the issue was first observed")
 
         with st.expander("Core", expanded=False):
 
@@ -56,6 +56,7 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
                 "Anomaly summary",
                 placeholder="What changed, when did it start, and how was it detected?",
                 height=120,
+                help="Describe what changed, when it started, and how it was detected. The AI uses this to find similar historical cases.",
             )
             if mode == "Form":
                 # NOTE: Some Streamlit versions may not accept value=None in number_input.
@@ -67,6 +68,7 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
                     value=None,
                     placeholder=float(DEFAULTS["yield_pct"]),
                     step=0.1,
+                    help="Percentage of products passing quality checks. Normal is ~92%. Below 80% is a serious problem.",
                 )
                 affected_lot_count = st.number_input(
                     "Affected lot count",
@@ -74,6 +76,7 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
                     value=None,
                     placeholder=int(DEFAULTS["affected_lot_count"]),
                     step=1,
+                    help="Number of production batches showing the issue. More lots = wider impact.",
                 )
                 time_window_hours = st.number_input(
                     "Time window (hours)",
@@ -81,6 +84,7 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
                     value=None,
                     placeholder=int(DEFAULTS["time_window_hours"]),
                     step=1,
+                    help="How long the anomaly has been occurring. Short (<12h) = sudden event; long (>48h) = gradual drift.",
                 )
             else:
                 st.caption("Core metrics will be provided via JSON input below.")
@@ -100,12 +104,14 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
                     value=None,
                     placeholder=float(DEFAULTS["metric_variance"]),
                     step=0.01,
+                    help="How unstable the measurements are. 0 = perfectly stable, >0.36 = very noisy.",
                 )
                 change_magnitude = st.number_input(
                     "Change magnitude (+/-)",
                     value=None,
                     placeholder=float(DEFAULTS["change_magnitude"]),
                     step=0.1,
+                    help="How much the metric shifted from normal. Negative = got worse, positive = improved.",
                 )
                 measurement_confidence = st.number_input(
                     "Measurement confidence (0-1)",
@@ -114,6 +120,7 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
                     value=None,
                     placeholder=float(DEFAULTS["measurement_confidence"]),
                     step=0.01,
+                    help="How trustworthy the measurement is. 0-1 scale. Below 0.5 = unreliable, above 0.8 = high confidence.",
                 )
                 rework_rate = st.number_input(
                     "Rework rate (%) (0-100)",
@@ -122,6 +129,7 @@ def build_intake_form() -> Tuple[bool, Dict[str, Any], str]:
                     value=None,
                     placeholder=float(DEFAULTS["rework_rate"]),
                     step=0.1,
+                    help="Percentage of products that need to be fixed/reprocessed. Normal is <2%, above 8% is serious.",
                 )
             else:
                 st.caption("Advanced metrics will be provided via JSON input below.")
