@@ -6,9 +6,12 @@ CLAUDE.md
 .env
 STRATEGY_REPORT_KLA.txt
 
-# Cached embeddings
+# Cached embeddings (legacy)
 data/case_embeddings.npy
 data/case_embeddings_hash.txt
+
+# ChromaDB persistent storage
+data/chroma_db/
 
 # Runtime output
 output/
