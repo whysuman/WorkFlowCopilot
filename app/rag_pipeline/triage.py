@@ -11,31 +11,31 @@ from typing import Any, Dict, List, Optional, Tuple
 
 # Mapping from case family keywords to diagnostic pattern categories
 FAMILY_PATTERN_MAP = {
-    "metrology instability": "Measurement Anomaly",
-    "etch cluster excursion": "Equipment Excursion",
-    "slow drift": "Process Drift",
-    "recipe change": "Recipe/Config Change Impact",
-    "positive yield shift": "False Alarm (Positive Shift)",
-    "rework rate exceeding": "Hidden Quality Issue",
-    "inconsistent yield": "Material Variance",
-    "high variance obscuring": "Signal-to-Noise Problem",
-    "catastrophic yield drop": "Critical Equipment Failure",
-    "gradual degradation": "Gradual Degradation",
+    "unreliable measurements": "Measurement Problem",
+    "single machine group": "Machine-Specific Issue",
+    "gradual quality decline": "Gradual Drift",
+    "configuration change": "Configuration Change Impact",
+    "unexpected quality improvement": "False Alarm",
+    "too many fixes": "Hidden Quality Issue",
+    "inconsistent quality": "Batch-to-Batch Variation",
+    "noisy data hiding": "Signal-to-Noise Problem",
+    "sudden machine failure": "Critical Machine Failure",
+    "slow wear": "Wear and Degradation",
 }
 
 # Suggested diagnostic approach per pattern
 DIAGNOSTIC_APPROACH_MAP = {
-    "Measurement Anomaly": "Validate measurement path first; cross-check with independent signal before investigating process.",
-    "Equipment Excursion": "Isolate to specific chamber/tool; compare impacted vs non-impacted segments.",
-    "Process Drift": "Segment by time window; look for gradual parameter shift rather than step change.",
-    "Recipe/Config Change Impact": "Correlate anomaly start time with recent recipe/config/software changes.",
-    "False Alarm (Positive Shift)": "Verify baseline has genuinely improved; update control limits if confirmed.",
-    "Hidden Quality Issue": "Yield may mask the problem; focus on rework rate and downstream quality metrics.",
-    "Material Variance": "Segment by material batch/lot source; check incoming material specs.",
-    "Signal-to-Noise Problem": "High variance obscures real signal; apply filtering or increase sample size before concluding.",
-    "Critical Equipment Failure": "Immediate tool-down likely needed; check maintenance logs and recent PM history.",
-    "Gradual Degradation": "Trend analysis over extended window; check consumable wear and PM schedules.",
-    "Unknown": "Insufficient pattern match; start with scope & segmentation, then measurement validation.",
+    "Measurement Problem": "First check if the measurements themselves are reliable. Compare with a different measurement source before assuming the product is actually bad.",
+    "Machine-Specific Issue": "Narrow it down to which specific machine is causing the issue. Compare output from the problem machine vs. working machines.",
+    "Gradual Drift": "Look at the trend over the full time window. Check if something is slowly shifting rather than suddenly breaking.",
+    "Configuration Change Impact": "Check what changed recently — process settings, software updates, or maintenance. Match the timing of the change to when quality dropped.",
+    "False Alarm": "Verify the improvement is real, not a measurement error. If confirmed, update the quality thresholds to reflect the new baseline.",
+    "Hidden Quality Issue": "Quality numbers look OK on the surface, but too many products need rework. Dig into the rework data to find the hidden problem.",
+    "Batch-to-Batch Variation": "Compare batches to find what's different — raw materials, machine used, or process conditions. Look for a common factor in the bad batches.",
+    "Signal-to-Noise Problem": "The data is too noisy to see the real signal. Filter the data more carefully or increase the sample size before drawing conclusions.",
+    "Critical Machine Failure": "This machine likely needs to be taken offline immediately. Check maintenance logs and recent service history for clues.",
+    "Wear and Degradation": "Look at the trend over the full time window. Check if any consumable parts are approaching their replacement schedule.",
+    "Unknown": "Not enough data to identify a clear pattern. Start by narrowing the scope, then verify the measurements are reliable.",
 }
 
 
@@ -114,7 +114,7 @@ def assess_investigation(
     # --- Reasoning ---
     reason_parts = [f"severity={severity}"]
     if yield_pct is not None:
-        reason_parts.append(f"yield={yield_pct:.1f}%")
+        reason_parts.append(f"quality rate={yield_pct:.1f}%")
     if pattern != "Unknown":
         reason_parts.append(f"pattern='{pattern}'")
     reason_parts.append(f"data confidence={confidence}")
