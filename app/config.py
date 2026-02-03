@@ -90,3 +90,4 @@ _PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 PERSIST_PATH = os.path.join(_PROJECT_ROOT, "output", "requests_responses.jsonl")
 CASES_PATH = os.path.join(_PROJECT_ROOT, "data", "realistic_cases.json")
+CHROMA_PERSIST_DIR = os.path.join(_PROJECT_ROOT, "data", "chroma_db")
