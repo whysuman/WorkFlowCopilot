@@ -1,0 +1,618 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Manufacturing Investigation Copilot API",
+    "description": "REST API for the AI-Guided Manufacturing Investigation Copilot. Provides investigation analysis, NLP field extraction, and configuration endpoints for Power Apps integration.",
+    "version": "1.0.0"
+  },
+  "host": "unshiny-cheri-tamelessly.ngrok-free.dev",
+  "basePath": "/",
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/api/v1/investigate": {
+      "post": {
+        "operationId": "investigate_api_v1_investigate_post",
+        "summary": "Investigate",
+        "description": "Run the full investigation pipeline and return results.",
+        "tags": [
+          "investigate"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "ngrok-skip-browser-warning",
+            "type": "string",
+            "default": "true",
+            "required": true,
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InvestigateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "$ref": "#/definitions/InvestigateResponse"
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "schema": {
+              "$ref": "#/definitions/HTTPValidationError"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/extract": {
+      "post": {
+        "operationId": "extract_api_v1_extract_post",
+        "summary": "Extract",
+        "description": "Extract structured investigation fields from free-text using an LLM.",
+        "tags": [
+          "extract"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "ngrok-skip-browser-warning",
+            "type": "string",
+            "default": "true",
+            "required": true,
+            "x-ms-visibility": "internal"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ExtractRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "$ref": "#/definitions/ExtractResponse"
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "schema": {
+              "$ref": "#/definitions/HTTPValidationError"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/config": {
+      "get": {
+        "operationId": "get_config_api_v1_config_get",
+        "summary": "Get Config",
+        "description": "Return dropdown options stripped of placeholder items.",
+        "tags": [
+          "config"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "ngrok-skip-browser-warning",
+            "type": "string",
+            "default": "true",
+            "required": true,
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "$ref": "#/definitions/ConfigResponse"
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "operationId": "health_api_v1_health_get",
+        "summary": "Health",
+        "description": "Health check endpoint.",
+        "tags": [
+          "health"
+        ],
+        "parameters": [
+          {
+            "in": "header",
+            "name": "ngrok-skip-browser-warning",
+            "type": "string",
+            "default": "true",
+            "required": true,
+            "x-ms-visibility": "internal"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "schema": {
+              "$ref": "#/definitions/HealthResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AssessmentResponse": {
+      "type": "object",
+      "title": "AssessmentResponse",
+      "description": "Investigation assessment output.",
+      "properties": {
+        "pattern": {
+          "type": "string",
+          "title": "Pattern",
+          "default": ""
+        },
+        "priority": {
+          "type": "string",
+          "title": "Priority",
+          "default": ""
+        },
+        "confidence": {
+          "type": "string",
+          "title": "Confidence",
+          "default": ""
+        },
+        "diagnostic_approach": {
+          "type": "string",
+          "title": "Diagnostic Approach",
+          "default": ""
+        },
+        "reasoning": {
+          "type": "string",
+          "title": "Reasoning",
+          "default": ""
+        },
+        "source": {
+          "type": "string",
+          "title": "Source",
+          "default": ""
+        }
+      }
+    },
+    "ConfigResponse": {
+      "type": "object",
+      "title": "ConfigResponse",
+      "description": "Dropdown options for Power Apps.",
+      "properties": {
+        "sites": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Sites"
+        },
+        "tool_groups": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Tool Groups"
+        },
+        "process_steps": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Process Steps"
+        },
+        "severity_levels": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Severity Levels"
+        }
+      },
+      "required": [
+        "sites",
+        "tool_groups",
+        "process_steps",
+        "severity_levels"
+      ]
+    },
+    "ExtractRequest": {
+      "type": "object",
+      "title": "ExtractRequest",
+      "description": "Free-text string for NLP extraction.",
+      "properties": {
+        "text": {
+          "type": "string",
+          "title": "Text"
+        }
+      },
+      "required": [
+        "text"
+      ]
+    },
+    "ExtractResponse": {
+      "type": "object",
+      "title": "ExtractResponse",
+      "description": "Extracted fields from NLP free-text.",
+      "properties": {
+        "site": {
+          "type": "string",
+          "title": "Site"
+        },
+        "tool_group": {
+          "type": "string",
+          "title": "Tool Group"
+        },
+        "process_step": {
+          "type": "string",
+          "title": "Process Step"
+        },
+        "severity": {
+          "type": "string",
+          "title": "Severity"
+        },
+        "anomaly_summary": {
+          "type": "string",
+          "title": "Anomaly Summary"
+        },
+        "yield_pct": {
+          "type": "number",
+          "title": "Yield Pct"
+        },
+        "metric_variance": {
+          "type": "number",
+          "title": "Metric Variance"
+        },
+        "change_magnitude": {
+          "type": "number",
+          "title": "Change Magnitude"
+        },
+        "measurement_confidence": {
+          "type": "number",
+          "title": "Measurement Confidence"
+        },
+        "affected_lot_count": {
+          "type": "integer",
+          "title": "Affected Lot Count"
+        },
+        "rework_rate": {
+          "type": "number",
+          "title": "Rework Rate"
+        },
+        "time_window_hours": {
+          "type": "integer",
+          "title": "Time Window Hours"
+        },
+        "backend": {
+          "type": "string",
+          "title": "Backend",
+          "default": ""
+        }
+      }
+    },
+    "HTTPValidationError": {
+      "type": "object",
+      "title": "HTTPValidationError",
+      "properties": {
+        "detail": {
+          "items": {
+            "$ref": "#/definitions/ValidationError"
+          },
+          "type": "array",
+          "title": "Detail"
+        }
+      }
+    },
+    "HealthResponse": {
+      "type": "object",
+      "title": "HealthResponse",
+      "description": "Health check response.",
+      "properties": {
+        "status": {
+          "type": "string",
+          "title": "Status",
+          "default": "ok"
+        },
+        "rag_loaded": {
+          "type": "boolean",
+          "title": "Rag Loaded",
+          "default": false
+        },
+        "llm_backend": {
+          "type": "string",
+          "title": "Llm Backend",
+          "default": ""
+        }
+      }
+    },
+    "InvestigateRequest": {
+      "type": "object",
+      "title": "InvestigateRequest",
+      "description": "Maps 1:1 to build_ai_response() payload.",
+      "properties": {
+        "site": {
+          "type": "string",
+          "title": "Site",
+          "default": ""
+        },
+        "tool_group": {
+          "type": "string",
+          "title": "Tool Group",
+          "default": ""
+        },
+        "process_step": {
+          "type": "string",
+          "title": "Process Step",
+          "default": ""
+        },
+        "severity": {
+          "type": "string",
+          "title": "Severity",
+          "default": ""
+        },
+        "anomaly_summary": {
+          "type": "string",
+          "title": "Anomaly Summary",
+          "default": ""
+        },
+        "timestamp": {
+          "type": "string",
+          "title": "Timestamp"
+        },
+        "metrics": {
+          "$ref": "#/definitions/MetricsInput"
+        }
+      }
+    },
+    "InvestigateResponse": {
+      "type": "object",
+      "title": "InvestigateResponse",
+      "description": "Full pipeline response shape.",
+      "properties": {
+        "similar_cases": {
+          "items": {
+            "$ref": "#/definitions/SimilarCaseDisplay"
+          },
+          "type": "array",
+          "title": "Similar Cases"
+        },
+        "no_strong_match_note": {
+          "type": "string",
+          "title": "No Strong Match Note"
+        },
+        "next_checks": {
+          "items": {
+            "$ref": "#/definitions/NextCheck"
+          },
+          "type": "array",
+          "title": "Next Checks"
+        },
+        "escalation_summary": {
+          "type": "string",
+          "title": "Escalation Summary",
+          "default": ""
+        },
+        "narrative": {
+          "type": "string",
+          "title": "Narrative",
+          "default": ""
+        },
+        "assessment": {
+          "$ref": "#/definitions/AssessmentResponse"
+        },
+        "meta": {
+          "$ref": "#/definitions/ResponseMeta"
+        }
+      },
+      "required": [
+        "meta"
+      ]
+    },
+    "MetricsInput": {
+      "type": "object",
+      "title": "MetricsInput",
+      "description": "Optional metric fields for an investigation request.",
+      "properties": {
+        "yield_pct": {
+          "type": "number",
+          "title": "Yield Pct"
+        },
+        "metric_variance": {
+          "type": "number",
+          "title": "Metric Variance"
+        },
+        "change_magnitude": {
+          "type": "number",
+          "title": "Change Magnitude"
+        },
+        "measurement_confidence": {
+          "type": "number",
+          "title": "Measurement Confidence"
+        },
+        "affected_lot_count": {
+          "type": "integer",
+          "title": "Affected Lot Count"
+        },
+        "rework_rate": {
+          "type": "number",
+          "title": "Rework Rate"
+        },
+        "time_window_hours": {
+          "type": "integer",
+          "title": "Time Window Hours"
+        }
+      }
+    },
+    "NextCheck": {
+      "type": "object",
+      "title": "NextCheck",
+      "properties": {
+        "category": {
+          "type": "string",
+          "title": "Category"
+        },
+        "check": {
+          "type": "string",
+          "title": "Check"
+        },
+        "why": {
+          "type": "string",
+          "title": "Why"
+        }
+      },
+      "required": [
+        "category",
+        "check",
+        "why"
+      ]
+    },
+    "PipelineTimings": {
+      "type": "object",
+      "title": "PipelineTimings",
+      "description": "Millisecond-precision timing for each pipeline step.",
+      "properties": {
+        "rag_retrieval_ms": {
+          "type": "integer",
+          "title": "Rag Retrieval Ms",
+          "default": 0
+        },
+        "llm_generation_ms": {
+          "type": "integer",
+          "title": "Llm Generation Ms",
+          "default": 0
+        },
+        "llm_assessment_ms": {
+          "type": "integer",
+          "title": "Llm Assessment Ms",
+          "default": 0
+        },
+        "total_ms": {
+          "type": "integer",
+          "title": "Total Ms",
+          "default": 0
+        }
+      }
+    },
+    "ResponseMeta": {
+      "type": "object",
+      "title": "ResponseMeta",
+      "description": "Metadata attached to every pipeline response.",
+      "properties": {
+        "response_id": {
+          "type": "string",
+          "title": "Response Id"
+        },
+        "backend": {
+          "type": "string",
+          "title": "Backend"
+        },
+        "model": {
+          "type": "string",
+          "title": "Model",
+          "default": ""
+        },
+        "rag_cases_retrieved": {
+          "type": "integer",
+          "title": "Rag Cases Retrieved",
+          "default": 0
+        },
+        "timings": {
+          "$ref": "#/definitions/PipelineTimings"
+        },
+        "llm_note": {
+          "type": "string",
+          "title": "Llm Note"
+        }
+      },
+      "required": [
+        "response_id",
+        "backend"
+      ]
+    },
+    "SimilarCaseDisplay": {
+      "type": "object",
+      "title": "SimilarCaseDisplay",
+      "description": "Display-ready similar case after RAG retrieval.",
+      "properties": {
+        "case_id": {
+          "type": "string",
+          "title": "Case Id",
+          "default": ""
+        },
+        "family": {
+          "type": "string",
+          "title": "Family",
+          "default": ""
+        },
+        "similarity": {
+          "type": "string",
+          "title": "Similarity",
+          "default": "Low"
+        },
+        "similarity_score": {
+          "type": "string",
+          "title": "Similarity Score",
+          "default": ""
+        },
+        "matched_signals": {
+          "type": "string",
+          "title": "Matched Signals",
+          "default": ""
+        },
+        "resolution": {
+          "type": "string",
+          "title": "Resolution",
+          "default": ""
+        }
+      }
+    },
+    "ValidationError": {
+      "type": "object",
+      "title": "ValidationError",
+      "properties": {
+        "loc": {
+          "items": {
+            "type": "string"
+          },
+          "type": "array",
+          "title": "Location"
+        },
+        "msg": {
+          "type": "string",
+          "title": "Message"
+        },
+        "type": {
+          "type": "string",
+          "title": "Error Type"
+        }
+      },
+      "required": [
+        "loc",
+        "msg",
+        "type"
+      ]
+    }
+  }
+}
