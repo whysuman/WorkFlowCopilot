@@ -8,6 +8,8 @@ STRATEGY_REPORT_KLA.txt
 copilot_manual.txt
 Interviewer Research for AI Automation Intern.txt
 power_apps_couterargms.txt
+jscode_powerapps_ui.js
+openapi_full.json
 
 # Cached embeddings (legacy)
 data/case_embeddings.npy
