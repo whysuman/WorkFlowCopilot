@@ -18,11 +18,10 @@ from app.config import (
 
 
 def render_intake_screen():
-    """Render the modern intake form screen with custom styling."""
+    """Render the intake form screen using native Streamlit components."""
 
-    # Page title
-    st.markdown('<h2 class="section-title">Anomaly Intake</h2>', unsafe_allow_html=True)
-    st.markdown('<p class="section-subtitle">Describe the production issue to trigger AI-driven root cause analysis.</p>', unsafe_allow_html=True)
+    st.subheader("Anomaly Intake")
+    st.caption("Describe the production issue to trigger AI-driven root cause analysis.")
 
     # Mode toggle
     mode = st.radio(
@@ -35,18 +34,8 @@ def render_intake_screen():
 
     with st.form("intake_form"):
         if mode == "Form":
-            # === PRODUCTION CONTEXT CARD ===
-            st.markdown("""
-            <div class="custom-card">
-                <div class="card-header">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect>
-                        <rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect>
-                    </svg>
-                    <p class="card-header-text">Production Context</p>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            # === PRODUCTION CONTEXT ===
+            st.markdown("**📋 Production Context**")
 
             col1, col2 = st.columns(2)
             with col1:
@@ -56,37 +45,19 @@ def render_intake_screen():
                 tool_group = st.selectbox("Tool Group", TOOL_GROUPS, index=0)
                 severity = st.selectbox("Issue Severity", SEVERITY_LEVELS, index=0)
 
-            st.markdown("<div style='height: 1rem'></div>", unsafe_allow_html=True)
+            st.markdown("---")
 
-            # === ISSUE NARRATIVE CARD ===
-            st.markdown("""
-            <div class="custom-card">
-                <div class="card-header">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
-                    </svg>
-                    <p class="card-header-text">Issue Narrative</p>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-
-            desc_col, badge_col = st.columns([3, 1])
-            with desc_col:
-                st.markdown('<p class="form-label">Detailed Description</p>', unsafe_allow_html=True)
-            with badge_col:
-                st.markdown('<span class="nlp-badge">Natural Language Enabled</span>', unsafe_allow_html=True)
+            # === ISSUE NARRATIVE ===
+            st.markdown("**📝 Issue Narrative**")
 
             anomaly_summary = st.text_area(
-                "Description",
+                "Detailed Description",
                 placeholder="e.g., Seeing unexpected particle count spikes on tool chamber B after PM cycle...",
                 height=120,
-                label_visibility="collapsed"
             )
 
             # === ADVANCED METRICS (Collapsible) ===
-            with st.expander("Add Optional Telemetry Markers"):
+            with st.expander("➕ Add Optional Telemetry Markers"):
                 met_col1, met_col2 = st.columns(2)
                 with met_col1:
                     yield_pct = st.number_input(
@@ -142,32 +113,18 @@ def render_intake_screen():
             timestamp = dt.datetime.now()
             form_metrics = {}
 
-            st.markdown("""
-            <div class="custom-card">
-                <div class="card-header">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-                    </svg>
-                    <p class="card-header-text">Natural Language Input</p>
-                    <span class="nlp-badge" style="margin-left: auto;">AI-Powered Extraction</span>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-
+            st.markdown("**⚡ Natural Language Input**")
             st.info("Describe the issue in plain language. The AI will automatically extract site, tool group, process step, severity, and metrics from your description.")
 
             nlp_free_text = st.text_area(
                 "Free-text description",
                 height=200,
                 placeholder="Example: Yield dropped to 78% on ETCH-CLUSTER-1 at Plant-A, 12 lots affected over 24 hours, high severity etch issue. Variance is 0.45, change magnitude -8.5, measurement confidence 0.65, rework rate 6.1%.",
-                label_visibility="collapsed"
             )
 
         # === SUBMIT SECTION ===
-        st.markdown("<div style='height: 1rem'></div>", unsafe_allow_html=True)
-
         submitted = st.form_submit_button(
-            "Submit Diagnosis",
+            "🔍 Submit Diagnosis",
             use_container_width=True,
             type="primary"
         )
@@ -208,7 +165,7 @@ def render_intake_screen():
 
 
 def render_results_screen(response: dict):
-    """Render the modern results screen with custom styling."""
+    """Render the results screen using native Streamlit components."""
 
     if not response:
         st.info("Submit an investigation to see AI-powered diagnosis results.")
@@ -217,7 +174,7 @@ def render_results_screen(response: dict):
     # --- NLP Extracted Fields (if available) ---
     nlp_result = st.session_state.get("nlp_extraction_result")
     if nlp_result:
-        with st.expander("Extracted Fields (NLP)", expanded=False):
+        with st.expander("📤 Extracted Fields (NLP)", expanded=False):
             col_ctx, col_met = st.columns(2)
             with col_ctx:
                 st.markdown("**Context**")
@@ -250,100 +207,62 @@ def render_results_screen(response: dict):
         st.session_state.last_response = None
         st.rerun()
 
-    st.markdown("<div style='height: 1rem'></div>", unsafe_allow_html=True)
-
-    # === MAIN RESULTS CARD ===
+    # === MAIN RESULTS ===
     pattern = assessment.get("pattern", "Analysis Complete")
     priority = assessment.get("priority", "Medium")
     confidence = assessment.get("confidence", "Medium")
-
-    priority_class = f"priority-{priority.lower()}"
     confidence_pct = {"High": 94, "Medium": 72, "Low": 45}.get(confidence, 70)
 
-    st.markdown(f"""
-    <div class="custom-card" style="overflow: hidden;">
-        <div class="results-header">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem;">
-                <span class="diagnosis-badge">AI Diagnosis</span>
-                <span class="priority-badge {priority_class}">
-                    Priority: {priority}
-                </span>
-            </div>
-            <h2 class="diagnosis-title">{pattern}</h2>
-            <p class="diagnosis-subtitle">{assessment.get("diagnostic_approach", "AI-generated diagnostic recommendation")}</p>
-        </div>
-        <div class="confidence-section">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <p class="confidence-label">Confidence Score</p>
-                    <div style="display: flex; align-items: center; gap: 1rem;">
-                        <span class="confidence-value">{confidence_pct}%</span>
-                        <div class="confidence-bar">
-                            <div class="confidence-fill" style="width: {confidence_pct}%;"></div>
-                        </div>
-                    </div>
-                </div>
-                <div style="text-align: right;">
-                    <p class="confidence-label">Status</p>
-                    <div style="display: flex; align-items: center; gap: 0.5rem; color: #22c55e; font-weight: 700;">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                        </svg>
-                        Validated Pattern
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    """, unsafe_allow_html=True)
+    # Priority colors
+    priority_colors = {"Critical": "🔴", "High": "🟠", "Medium": "🟡", "Low": "🟢"}
+    priority_icon = priority_colors.get(priority, "⚪")
+
+    st.markdown("---")
+
+    # Diagnosis header
+    col1, col2 = st.columns([3, 1])
+    with col1:
+        st.markdown(f"### 🎯 {pattern}")
+        st.caption(assessment.get("diagnostic_approach", "AI-generated diagnostic recommendation"))
+    with col2:
+        st.metric("Priority", f"{priority_icon} {priority}")
+
+    # Confidence and status
+    col1, col2 = st.columns(2)
+    with col1:
+        st.metric("Confidence Score", f"{confidence_pct}%")
+        st.progress(confidence_pct / 100)
+    with col2:
+        st.success("✓ Validated Pattern")
+
+    st.markdown("---")
 
     # === AI NARRATIVE ===
     narrative = response.get("narrative", "")
     if narrative:
-        st.markdown("""
-        <div class="custom-card">
-            <div class="card-header">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                    <polyline points="14 2 14 8 20 8"></polyline>
-                </svg>
-                <p class="card-header-text">AI Narrative</p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("**📄 AI Narrative**")
         st.write(narrative)
+        st.markdown("---")
 
     # === RECOMMENDED ACTIONS ===
     checks = response.get("next_checks", [])
     if checks:
-        st.markdown("""
-        <div class="custom-card">
-            <div class="card-header">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
-                </svg>
-                <p class="card-header-text">Immediate Action Plan</p>
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
+        st.markdown("**✅ Immediate Action Plan**")
         for i, check in enumerate(checks, 1):
             category = check.get("category", "")
-            st.markdown(f"""
-            <div class="action-step">
-                <div class="step-number">{i}</div>
-                <div class="step-content">
-                    <h4>{check.get("check", "")}</h4>
-                    <p>{check.get("why", "")}</p>
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
+            with st.container(border=True):
+                col1, col2 = st.columns([1, 20])
+                with col1:
+                    st.markdown(f"**{i}**")
+                with col2:
+                    if category:
+                        st.caption(category.upper())
+                    st.markdown(f"**{check.get('check', '')}**")
+                    st.caption(check.get("why", ""))
 
     # === SIMILAR CASES ===
-    st.markdown("<div style='height: 1rem'></div>", unsafe_allow_html=True)
-    st.subheader("Similar Historical Cases")
+    st.markdown("---")
+    st.markdown("**📚 Similar Historical Cases**")
 
     # Show no-match note if present
     note = response.get("no_strong_match_note")
@@ -370,16 +289,15 @@ def render_results_screen(response: dict):
     # === ESCALATION SUMMARY ===
     escalation = response.get("escalation_summary", "")
     if escalation:
-        st.markdown("<div style='height: 1rem'></div>", unsafe_allow_html=True)
-        st.subheader("Escalation Summary")
+        st.markdown("---")
+        st.markdown("**⚠️ Escalation Summary**")
         st.warning(escalation)
 
     # === ASSESSMENT REASONING ===
     reasoning = assessment.get("reasoning", "")
     source = assessment.get("source", "")
     if reasoning or source:
-        st.markdown("<div style='height: 1rem'></div>", unsafe_allow_html=True)
-        with st.expander("Assessment Details"):
+        with st.expander("🔬 Assessment Details"):
             if reasoning:
                 st.write(reasoning)
             if source:
@@ -387,9 +305,7 @@ def render_results_screen(response: dict):
                 st.caption(f"Assessment source: {source_label}")
 
     # === DIAGNOSTICS METADATA ===
-    st.markdown("<div style='height: 1rem'></div>", unsafe_allow_html=True)
-
-    with st.expander("Diagnostics Metadata"):
+    with st.expander("⚙️ Diagnostics Metadata"):
         col1, col2, col3 = st.columns(3)
         with col1:
             st.metric("Backend", meta.get("backend", "unknown"))
