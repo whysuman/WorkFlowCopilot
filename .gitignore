@@ -10,6 +10,9 @@ Interviewer Research for AI Automation Intern.txt
 power_apps_couterargms.txt
 jscode_powerapps_ui.js
 openapi_full.json
+kla_presentation_script.md
+power_apps_integration.md
+project_deep_dive.md
 
 # Cached embeddings (legacy)
 data/case_embeddings.npy
