@@ -74,9 +74,11 @@ def _check_huggingface_available() -> bool:
 def _check_ollama_available() -> bool:
     """Check if Ollama server is running AND the required model is pulled."""
     try:
-        import ollama
-        models_resp = ollama.list()
-        model_names = [m.get("name", "") for m in getattr(models_resp, "models", [])]
+        import httpx
+        resp = httpx.get("http://localhost:11434/api/tags", timeout=5.0)
+        resp.raise_for_status()
+        models = resp.json().get("models", [])
+        model_names = [m.get("name", "") for m in models]
         return any(OLLAMA_MODEL in name for name in model_names)
     except Exception:
         return False
@@ -257,17 +259,23 @@ def _call_huggingface(system_prompt: str, user_prompt: str) -> Optional[str]:
     reraise=True,
 )
 def _call_ollama(system_prompt: str, user_prompt: str) -> Optional[str]:
-    """Call local Ollama server with retry. Returns raw text or None."""
-    import ollama
-    response = ollama.chat(
-        model=OLLAMA_MODEL,
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-        options={"temperature": LLM_TEMPERATURE, "num_predict": LLM_MAX_TOKENS},
+    """Call local Ollama server via HTTP API with retry. Returns raw text or None."""
+    import httpx
+    response = httpx.post(
+        "http://localhost:11434/api/chat",
+        json={
+            "model": OLLAMA_MODEL,
+            "messages": [
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            "options": {"temperature": LLM_TEMPERATURE, "num_predict": LLM_MAX_TOKENS},
+            "stream": False,
+        },
+        timeout=LLM_TIMEOUT,
     )
-    return response["message"]["content"]
+    response.raise_for_status()
+    return response.json()["message"]["content"]
 
 
 # ---------------------------------------------------------------------------
