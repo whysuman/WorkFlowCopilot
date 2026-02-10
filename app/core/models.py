@@ -99,6 +99,15 @@ class LLMInvestigationResponse(BaseModel):
     next_checks: list[NextCheck]
     escalation_summary: str
 
+    @field_validator("escalation_summary", mode="before")
+    @classmethod
+    def coerce_escalation_summary(cls, v):
+        """Smaller LLMs (e.g. llama3.2:3b) may return a dict instead of a string."""
+        if isinstance(v, dict):
+            parts = [f"{k}: {v_}" for k, v_ in v.items()]
+            return " | ".join(parts)
+        return v
+
 
 class LLMAssessmentResponse(BaseModel):
     """Validated shape of the assessment LLM output."""
