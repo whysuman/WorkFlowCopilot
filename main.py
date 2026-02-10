@@ -16,6 +16,162 @@ from app.config import (
     PERSIST_PATH, SITES, TOOL_GROUPS, PROCESS_STEPS, SEVERITY_LEVELS, DEFAULTS
 )
 
+SEVERITY_OPTION_LABELS = {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+}
+SEVERITY_OPTION_KEYS = list(SEVERITY_OPTION_LABELS.keys())
+REQUIRED_FIELD_LABELS = {
+    "site_selector": "Site Location",
+    "tool_group_selector": "Tool Group",
+    "process_step_selector": "Process Step",
+    "severity_selector": "Issue Severity",
+    "yield_pct_required": "Yield (%)",
+    "affected_lot_count_required": "Affected Lot Count",
+    "time_window_hours_required": "Time Window (hours)",
+}
+REQUIRED_WIDGET_KEYS = list(REQUIRED_FIELD_LABELS.keys())
+HIGHLIGHTABLE_WIDGET_KEYS = REQUIRED_WIDGET_KEYS + ["core_issue_narrative"]
+
+
+def _has_valid_production_context(
+    site: str,
+    tool_group: str,
+    process_step: str,
+    severity: str | None,
+) -> bool:
+    """Return True only when all production context inputs are valid selections."""
+    return (
+        site in SITES[1:]
+        and tool_group in TOOL_GROUPS[1:]
+        and process_step in PROCESS_STEPS[1:]
+        and severity in SEVERITY_LEVELS[1:]
+    )
+
+
+def _invalid_required_keys(
+    site: str,
+    tool_group: str,
+    process_step: str,
+    severity: str | None,
+    yield_pct: float | None,
+    affected_lot_count: int | None,
+    time_window_hours: int | None,
+) -> list[str]:
+    """Return widget keys for required fields that are currently invalid."""
+    invalid = []
+    if site not in SITES[1:]:
+        invalid.append("site_selector")
+    if tool_group not in TOOL_GROUPS[1:]:
+        invalid.append("tool_group_selector")
+    if process_step not in PROCESS_STEPS[1:]:
+        invalid.append("process_step_selector")
+    if severity not in SEVERITY_LEVELS[1:]:
+        invalid.append("severity_selector")
+    if yield_pct is None:
+        invalid.append("yield_pct_required")
+    if affected_lot_count is None:
+        invalid.append("affected_lot_count_required")
+    if time_window_hours is None:
+        invalid.append("time_window_hours_required")
+    return invalid
+
+
+def _render_invalid_required_css(invalid_keys: list[str]):
+    """Highlight invalid required widgets using their Streamlit key wrapper class."""
+    import streamlit as st
+
+    reset_selector_by_key = {
+        "site_selector": ['.st-key-site_selector [data-baseweb="select"]'],
+        "tool_group_selector": ['.st-key-tool_group_selector [data-baseweb="select"]'],
+        "process_step_selector": ['.st-key-process_step_selector [data-baseweb="select"]'],
+        "severity_selector": [
+            '.st-key-severity_selector [data-baseweb="button-group"]',
+            '.st-key-severity_selector [role="radiogroup"]',
+        ],
+        "yield_pct_required": [
+            '.st-key-yield_pct_required [data-testid="stNumberInputContainer"]',
+            '.st-key-yield_pct_required [data-testid="stNumberInput"]',
+            '.st-key-yield_pct_required [data-baseweb="base-input"]',
+            '.st-key-yield_pct_required [data-baseweb="input"]',
+            '.st-key-yield_pct_required input',
+        ],
+        "affected_lot_count_required": [
+            '.st-key-affected_lot_count_required [data-testid="stNumberInputContainer"]',
+            '.st-key-affected_lot_count_required [data-testid="stNumberInput"]',
+            '.st-key-affected_lot_count_required [data-baseweb="base-input"]',
+            '.st-key-affected_lot_count_required [data-baseweb="input"]',
+            '.st-key-affected_lot_count_required input',
+        ],
+        "time_window_hours_required": [
+            '.st-key-time_window_hours_required [data-testid="stNumberInputContainer"]',
+            '.st-key-time_window_hours_required [data-testid="stNumberInput"]',
+            '.st-key-time_window_hours_required [data-baseweb="base-input"]',
+            '.st-key-time_window_hours_required [data-baseweb="input"]',
+            '.st-key-time_window_hours_required input',
+        ],
+        "core_issue_narrative": ['.st-key-core_issue_narrative [data-baseweb="textarea"]'],
+    }
+
+    invalid_selector_by_key = {
+        "site_selector": ['.st-key-site_selector [data-baseweb="select"]'],
+        "tool_group_selector": ['.st-key-tool_group_selector [data-baseweb="select"]'],
+        "process_step_selector": ['.st-key-process_step_selector [data-baseweb="select"]'],
+        "severity_selector": [
+            '.st-key-severity_selector [data-baseweb="button-group"]',
+            '.st-key-severity_selector [role="radiogroup"]',
+        ],
+        "yield_pct_required": [
+            '.st-key-yield_pct_required [data-testid="stNumberInputContainer"]',
+        ],
+        "affected_lot_count_required": [
+            '.st-key-affected_lot_count_required [data-testid="stNumberInputContainer"]',
+        ],
+        "time_window_hours_required": [
+            '.st-key-time_window_hours_required [data-testid="stNumberInputContainer"]',
+        ],
+        "core_issue_narrative": ['.st-key-core_issue_narrative [data-baseweb="textarea"]'],
+    }
+
+    all_reset_selectors = ",\n".join(
+        selector
+        for key in HIGHLIGHTABLE_WIDGET_KEYS
+        for selector in reset_selector_by_key.get(key, [])
+    )
+    invalid_selectors = ",\n".join(
+        selector
+        for key in invalid_keys
+        for selector in invalid_selector_by_key.get(key, [])
+    )
+
+    if not all_reset_selectors:
+        return
+
+    invalid_block = ""
+    if invalid_selectors:
+        invalid_block = f"""
+{invalid_selectors} {{
+    box-shadow: none !important;
+    outline: 2px solid #dc2626 !important;
+    outline-offset: 1px !important;
+    border-radius: 0.5rem !important;
+}}
+"""
+
+    st.markdown(
+        f"""
+<style>
+{all_reset_selectors} {{
+    box-shadow: none !important;
+    outline: none !important;
+}}
+{invalid_block}
+</style>
+""",
+        unsafe_allow_html=True,
+    )
+
 
 def render_intake_screen():
     """Render the modern intake form screen with custom styling."""
@@ -32,6 +188,13 @@ def render_intake_screen():
         key="mode",
         label_visibility="collapsed"
     )
+
+    invalid_required_keys = st.session_state.get("invalid_required_keys", [])
+    if mode != "Form":
+        invalid_required_keys = []
+        st.session_state.invalid_required_keys = []
+    if invalid_required_keys:
+        _render_invalid_required_css(invalid_required_keys)
 
     with st.form("intake_form"):
         if mode == "Form":
@@ -50,11 +213,19 @@ def render_intake_screen():
 
             col1, col2 = st.columns(2)
             with col1:
-                site = st.selectbox("Site Location", SITES, index=0)
-                process_step = st.selectbox("Process Step", PROCESS_STEPS, index=0)
+                site = st.selectbox("Site Location", SITES, index=0, key="site_selector")
+                process_step = st.selectbox("Process Step", PROCESS_STEPS, index=0, key="process_step_selector")
             with col2:
-                tool_group = st.selectbox("Tool Group", TOOL_GROUPS, index=0)
-                severity = st.selectbox("Issue Severity", SEVERITY_LEVELS, index=0)
+                tool_group = st.selectbox("Tool Group", TOOL_GROUPS, index=0, key="tool_group_selector")
+                severity_key = st.segmented_control(
+                    "Issue Severity",
+                    options=SEVERITY_OPTION_KEYS,
+                    format_func=lambda value: SEVERITY_OPTION_LABELS[value],
+                    selection_mode="single",
+                    default=None,
+                    key="severity_selector",
+                )
+                severity = severity_key
 
             st.markdown("<div style='height: 1rem'></div>", unsafe_allow_html=True)
 
@@ -67,56 +238,68 @@ def render_intake_screen():
                         <line x1="12" y1="8" x2="12" y2="12"></line>
                         <line x1="12" y1="16" x2="12.01" y2="16"></line>
                     </svg>
-                    <p class="card-header-text">Issue Narrative</p>
+                    <p class="card-header-text">CORE ISSUE NARRATIVE</p>
                 </div>
             </div>
             """, unsafe_allow_html=True)
 
-            desc_col, badge_col = st.columns([3, 1])
-            with desc_col:
-                st.markdown('<p class="form-label">Detailed Description</p>', unsafe_allow_html=True)
-            with badge_col:
-                st.markdown('<span class="nlp-badge">Natural Language Enabled</span>', unsafe_allow_html=True)
+            core_col1, core_col2, core_col3 = st.columns(3)
+            with core_col1:
+                yield_pct = st.number_input(
+                    "Yield (%)", min_value=0.0, max_value=100.0, value=None,
+                    placeholder=str(DEFAULTS["yield_pct"]),
+                    help="Percentage of products passing quality checks. Normal is around 92%. Below 80% is typically serious.",
+                    key="yield_pct_required",
+                )
+            with core_col2:
+                affected_lot_count = st.number_input(
+                    "Affected Lot Count", min_value=0, value=None,
+                    placeholder=str(DEFAULTS["affected_lot_count"]),
+                    help="Number of production lots showing the issue. More lots usually means broader impact.",
+                    key="affected_lot_count_required",
+                )
+            with core_col3:
+                time_window_hours = st.number_input(
+                    "Time Window (hours)", min_value=1, value=None,
+                    placeholder=str(DEFAULTS["time_window_hours"]),
+                    help="How long the anomaly has been occurring. Short windows often indicate sudden events.",
+                    key="time_window_hours_required",
+                )
+
+            st.markdown('<p class="form-label">Detailed Description (Optional)</p>', unsafe_allow_html=True)
 
             anomaly_summary = st.text_area(
                 "Description",
                 placeholder="e.g., Seeing unexpected particle count spikes on tool chamber B after PM cycle...",
                 height=120,
-                label_visibility="collapsed"
+                label_visibility="collapsed",
+                key="core_issue_narrative",
             )
 
             # === ADVANCED METRICS (Collapsible) ===
-            with st.expander("Add Optional Telemetry Markers"):
+            with st.expander("Add Advanced Telemetry Markers (Reccommended)"):
                 met_col1, met_col2 = st.columns(2)
                 with met_col1:
-                    yield_pct = st.number_input(
-                        "Yield (%)", min_value=0.0, max_value=100.0, value=None,
-                        placeholder=str(DEFAULTS["yield_pct"])
-                    )
-                    affected_lot_count = st.number_input(
-                        "Affected Lot Count", min_value=0, value=None,
-                        placeholder=str(DEFAULTS["affected_lot_count"])
-                    )
-                    time_window_hours = st.number_input(
-                        "Time Window (hours)", min_value=1, value=None,
-                        placeholder=str(DEFAULTS["time_window_hours"])
-                    )
                     metric_variance = st.number_input(
                         "Metric Variance", min_value=0.0, value=None,
-                        placeholder=str(DEFAULTS["metric_variance"])
+                        placeholder=str(DEFAULTS["metric_variance"]),
+                        help="How unstable the metric is. Higher variance indicates noisier or less stable behavior.",
                     )
                 with met_col2:
                     change_magnitude = st.number_input(
                         "Change Magnitude (+/-)", value=None,
-                        placeholder=str(DEFAULTS["change_magnitude"])
+                        placeholder=str(DEFAULTS["change_magnitude"]),
+                        help="Size of the shift from baseline. Negative values indicate degradation, positive indicates improvement.",
                     )
                     measurement_confidence = st.number_input(
                         "Measurement Confidence (0-1)", min_value=0.0, max_value=1.0, value=None,
-                        placeholder=str(DEFAULTS["measurement_confidence"])
+                        placeholder=str(DEFAULTS["measurement_confidence"]),
+                        help="Confidence in the measurement itself on a 0-1 scale. Lower values suggest instrumentation uncertainty.",
                     )
                     rework_rate = st.number_input(
                         "Rework Rate (%)", min_value=0.0, max_value=100.0, value=None,
-                        placeholder=str(DEFAULTS["rework_rate"])
+                        placeholder=str(DEFAULTS["rework_rate"]),
+                        help="Percentage of products requiring rework. Elevated rework can indicate hidden process quality issues.",
                     )
 
             nlp_free_text = ""
@@ -169,7 +352,7 @@ def render_intake_screen():
         submitted = st.form_submit_button(
             "Submit Diagnosis",
             use_container_width=True,
-            type="primary"
+            type="primary",
         )
 
     # Compute and display readiness
@@ -435,66 +618,104 @@ def main():
 
         if submitted:
             mode = inputs["mode"]
+            can_submit = True
 
-            # Show loading state
-            with st.spinner("Processing Diagnostic Pipeline..."):
-                if mode == "NLP":
-                    if not nlp_free_text.strip():
-                        st.error("Please enter a description of the issue.")
-                    else:
-                        backend = detect_backend()
-                        if backend == "placeholder":
-                            st.error("NLP mode requires an LLM backend. Set HF_TOKEN or start Ollama.")
-                        else:
-                            extracted = extract_fields_from_text(nlp_free_text, backend)
-                            if extracted is None:
-                                st.error("Failed to extract fields. Please try again or use Form mode.")
-                            else:
-                                st.session_state.nlp_extraction_result = extracted
-                                nlp_metrics = {
-                                    k: extracted.get(k)
-                                    for k in ["yield_pct", "metric_variance", "change_magnitude",
-                                              "measurement_confidence", "affected_lot_count",
-                                              "rework_rate", "time_window_hours"]
-                                }
-                                payload = build_payload(
-                                    site=extracted.get("site") or inputs["site"],
-                                    tool_group=extracted.get("tool_group") or inputs["tool_group"],
-                                    process_step=extracted.get("process_step") or inputs["process_step"],
-                                    severity=extracted.get("severity") or inputs["severity"],
-                                    timestamp=inputs["timestamp"],
-                                    anomaly_summary=extracted.get("anomaly_summary") or nlp_free_text[:200],
-                                    mode=mode,
-                                    form_metrics=inputs["form_metrics"],
-                                    nlp_metrics=nlp_metrics,
-                                )
-                                st.session_state.last_request = payload
-                                st.session_state.last_response = build_ai_response(payload)
-                                append_jsonl(PERSIST_PATH, {
-                                    "ts": dt.datetime.now().isoformat(),
-                                    "request": payload,
-                                    "response": st.session_state.last_response,
-                                })
-                                st.rerun()
-                else:
-                    payload = build_payload(
-                        site=inputs["site"],
-                        tool_group=inputs["tool_group"],
-                        process_step=inputs["process_step"],
-                        severity=inputs["severity"],
-                        timestamp=inputs["timestamp"],
-                        anomaly_summary=inputs["anomaly_summary"],
-                        mode=mode,
-                        form_metrics=inputs["form_metrics"],
+            if mode == "Form":
+                invalid_keys = _invalid_required_keys(
+                    site=inputs["site"],
+                    tool_group=inputs["tool_group"],
+                    process_step=inputs["process_step"],
+                    severity=inputs["severity"],
+                    yield_pct=inputs["form_metrics"].get("yield_pct"),
+                    affected_lot_count=inputs["form_metrics"].get("affected_lot_count"),
+                    time_window_hours=inputs["form_metrics"].get("time_window_hours"),
+                )
+                if invalid_keys:
+                    st.session_state.invalid_required_keys = invalid_keys
+                    _render_invalid_required_css(invalid_keys)
+                    invalid_labels = [
+                        REQUIRED_FIELD_LABELS[key]
+                        for key in invalid_keys
+                        if key in REQUIRED_FIELD_LABELS
+                    ]
+                    st.error(
+                        "Cannot submit until all required fields are valid. "
+                        + "Missing/invalid: "
+                        + ", ".join(invalid_labels)
                     )
-                    st.session_state.last_request = payload
-                    st.session_state.last_response = build_ai_response(payload)
-                    append_jsonl(PERSIST_PATH, {
-                        "ts": dt.datetime.now().isoformat(),
-                        "request": payload,
-                        "response": st.session_state.last_response,
-                    })
-                    st.rerun()
+                    can_submit = False
+                else:
+                    st.session_state.invalid_required_keys = []
+
+            if can_submit and mode == "Form" and not _has_valid_production_context(
+                site=inputs["site"],
+                tool_group=inputs["tool_group"],
+                process_step=inputs["process_step"],
+                severity=inputs["severity"],
+            ):
+                st.error(
+                    "Cannot submit until all Production Context fields have valid selections."
+                )
+            elif can_submit:
+                # Show loading state
+                with st.spinner("Processing Diagnostic Pipeline..."):
+                    if mode == "NLP":
+                        if not nlp_free_text.strip():
+                            st.error("Please enter a description of the issue.")
+                        else:
+                            backend = detect_backend()
+                            if backend == "placeholder":
+                                st.error("NLP mode requires an LLM backend. Set HF_TOKEN or start Ollama.")
+                            else:
+                                extracted = extract_fields_from_text(nlp_free_text, backend)
+                                if extracted is None:
+                                    st.error("Failed to extract fields. Please try again or use Form mode.")
+                                else:
+                                    st.session_state.nlp_extraction_result = extracted
+                                    nlp_metrics = {
+                                        k: extracted.get(k)
+                                        for k in ["yield_pct", "metric_variance", "change_magnitude",
+                                                  "measurement_confidence", "affected_lot_count",
+                                                  "rework_rate", "time_window_hours"]
+                                    }
+                                    payload = build_payload(
+                                        site=extracted.get("site") or inputs["site"],
+                                        tool_group=extracted.get("tool_group") or inputs["tool_group"],
+                                        process_step=extracted.get("process_step") or inputs["process_step"],
+                                        severity=extracted.get("severity") or inputs["severity"],
+                                        timestamp=inputs["timestamp"],
+                                        anomaly_summary=extracted.get("anomaly_summary") or nlp_free_text[:200],
+                                        mode=mode,
+                                        form_metrics=inputs["form_metrics"],
+                                        nlp_metrics=nlp_metrics,
+                                    )
+                                    st.session_state.last_request = payload
+                                    st.session_state.last_response = build_ai_response(payload)
+                                    append_jsonl(PERSIST_PATH, {
+                                        "ts": dt.datetime.now().isoformat(),
+                                        "request": payload,
+                                        "response": st.session_state.last_response,
+                                    })
+                                    st.rerun()
+                    else:
+                        payload = build_payload(
+                            site=inputs["site"],
+                            tool_group=inputs["tool_group"],
+                            process_step=inputs["process_step"],
+                            severity=inputs["severity"],
+                            timestamp=inputs["timestamp"],
+                            anomaly_summary=inputs["anomaly_summary"],
+                            mode=mode,
+                            form_metrics=inputs["form_metrics"],
+                        )
+                        st.session_state.last_request = payload
+                        st.session_state.last_response = build_ai_response(payload)
+                        append_jsonl(PERSIST_PATH, {
+                            "ts": dt.datetime.now().isoformat(),
+                            "request": payload,
+                            "response": st.session_state.last_response,
+                        })
+                        st.rerun()
 
     render_footer()
 
