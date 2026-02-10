@@ -21,3 +21,4 @@ data/chroma_db/
 # Runtime output
 output/
 .claude
+NUL
