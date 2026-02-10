@@ -285,6 +285,25 @@ section[data-testid="stForm"] > div {
     border: none !important;
     padding: 0 !important;
 }
+
+/* Native segmented control: intentionally no custom severity overrides. */
+
+/* Temporary debug badge */
+.theme-debug-badge {
+    position: fixed;
+    right: 12px;
+    bottom: 12px;
+    z-index: 999999;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    font-family: "Inter", sans-serif;
+    background: var(--secondary-background-color);
+    color: var(--text-color);
+    border: 1px solid rgba(128, 128, 128, 0.35);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
 </style>
 """
 
@@ -325,20 +344,15 @@ THEME_OBSERVER_JS = """
         }
     };
 
-    let currentTheme = null;
-
     function detectTheme() {
-        // Find Streamlit's main container
         const stApp = document.querySelector('[data-testid="stAppViewContainer"]');
         if (!stApp) return null;
-
         const bg = window.getComputedStyle(stApp).backgroundColor;
         const match = bg.match(/rgb\\((\\d+),\\s*(\\d+),\\s*(\\d+)/);
         if (match) {
-            const r = parseInt(match[1]);
-            const g = parseInt(match[2]);
-            const b = parseInt(match[3]);
-            // Calculate luminance
+            const r = parseInt(match[1], 10);
+            const g = parseInt(match[2], 10);
+            const b = parseInt(match[3], 10);
             const luminance = (0.299 * r + 0.587 * g + 0.114 * b);
             return luminance < 128 ? 'dark' : 'light';
         }
@@ -349,7 +363,8 @@ THEME_OBSERVER_JS = """
         const c = themes[themeName];
         if (!c) return;
 
-        // Apply to all custom elements
+        // Apply to custom shell elements only.
+        // Severity controls are styled in CSS with Streamlit theme tokens.
         document.querySelectorAll('.custom-header').forEach(el => {
             el.style.backgroundColor = c.bg;
             el.style.borderBottomColor = c.border;
@@ -431,17 +446,15 @@ THEME_OBSERVER_JS = """
 
     function checkAndApply() {
         const theme = detectTheme();
-        if (theme && theme !== currentTheme) {
-            currentTheme = theme;
-            applyTheme(theme);
-        }
+        if (!theme) return;
+        applyTheme(theme);
     }
 
     // Run immediately
     checkAndApply();
 
     // Poll for changes (catches theme switches)
-    setInterval(checkAndApply, 200);
+    setInterval(checkAndApply, 250);
 
     // Also observe DOM mutations for new elements
     const observer = new MutationObserver(() => {
@@ -465,6 +478,11 @@ def inject_custom_css():
 
     st.markdown(BASE_CSS, unsafe_allow_html=True)
     st.markdown(THEME_OBSERVER_JS, unsafe_allow_html=True)
+    theme_base = st.get_option("theme.base") or "auto"
+    st.markdown(
+        f'<div class="theme-debug-badge">Theme(base): {theme_base} | Severity: native segmented</div>',
+        unsafe_allow_html=True,
+    )
 
 
 def render_header():
