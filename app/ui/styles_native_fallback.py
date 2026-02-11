@@ -702,8 +702,8 @@ def render_header():
 
     col1, col2 = st.columns([3, 1])
     with col1:
-        st.markdown("### ⚡ Diagnostic AI")
-        st.caption("MANUFACTURING ENGINEERING PORTAL")
+        st.markdown("### ⚡ ACCEL MAN")
+        st.caption("MANUFACTURING INVESTIGATION PORTAL")
     with col2:
         st.markdown("**Engineer A. Chen**")
         st.caption("Site: Austin-TX-01")

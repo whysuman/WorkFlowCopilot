@@ -598,7 +598,7 @@ def render_results_screen(response: dict):
 
 def main():
     st.set_page_config(
-        page_title="Diagnostic AI - Manufacturing Portal",
+        page_title="ACCEL MAN- Manufacturing Portal",
         page_icon="⚡",
         layout="wide",
         initial_sidebar_state="collapsed"

@@ -498,8 +498,8 @@ def render_header():
                 </svg>
             </div>
             <div>
-                <p class="header-title">Diagnostic AI</p>
-                <p class="header-subtitle">Manufacturing Engineering Portal</p>
+                <p class="header-title">ACCEL MAN</p>
+                <p class="header-subtitle">Manufacturing Investigation Portal</p>
             </div>
         </div>
         <div class="header-user">
